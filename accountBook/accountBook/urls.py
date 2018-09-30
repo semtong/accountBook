@@ -31,6 +31,7 @@ urlpatterns = [
     # login form
     path('', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
     path('signup/', account_views.sign_up, name='signup'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 
     path('home/', home.home, name='home')
 ]
