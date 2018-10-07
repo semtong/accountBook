@@ -14,6 +14,7 @@ class AccountBooksName(models.Model):
     p_cnt = models.IntegerField(default=0)
     language = models.CharField(max_length=30)  # 언어설정 칼럼
     create_at = models.DateTimeField(auto_now_add=True)
+    create_user = models.CharField(max_length=100, null=False)
 
 
 class PartyBelongTo(models.Model):
@@ -43,7 +44,8 @@ class UseList(models.Model):
     """
         가계부 사용내역
     """
-    use_list = models.ForeignKey(AccountBooksName, related_name='+', on_delete=models.CASCADE)
+    book_name = models.ForeignKey(AccountBooksName, related_name='+', on_delete=models.CASCADE)
+    use_history = models.CharField(max_length=450, null=False)
     price = models.IntegerField(null=False)
     user = models.ForeignKey(User, related_name='+', on_delete=models.CASCADE)
     create_at = models.DateTimeField(auto_now_add=True)

@@ -27,7 +27,7 @@
                                 {% csrf_token %}
                                 {% include 'includes/form.html' %}
                                 <button type="submit" class="btn btn-primary btn-block">Create an account</button>
-                                <button type="button" class="btn btn-outline-warning btn-block" onclick="back()">Cancel</button>
+                                <a class="btn btn-outline-warning btn-block" href="{% url 'login' %}" role="button">Cancel</a>
                             </form>
 
                         </div>
@@ -43,10 +43,5 @@
         <script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
         <script src="{% static 'js/popper.min.js' %}"></script>
         <script src="{% static 'js/bootstrap.min.js' %}"></script>
-        <script>
-            function back(){
-                window.history.back();
-            }
-        </script>
     </body>
 </html>

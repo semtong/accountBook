@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% load widget_tweaks %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item">
+        <a href="{% url 'home'%}">
+            Main
+        </a>
+    </li>
+
+    <li class="breadcrumb-item active">
+            Account Register
+    </li>
+{% endblock %}
+
+{% block contents %}
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {% include 'includes/form.html' %}
+        <button type="submit" class="btn btn-success">Create Account Book</button>
+    </form>
+{% endblock %}
