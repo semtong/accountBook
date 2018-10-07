@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 # Create your views here.
 
+from django.http import Http404
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -10,16 +11,30 @@ from django.utils import timezone
 from .forms import *
 
 
+# @login_required
+# def write_history(request, history_pk):
+#     try:
+#         history = UseList.objects.filter(pk=history_pk)
+#         history_name = AccountBooksName.objects.get(pk=history_pk)
+#         if len(history) == 0:
+#             history = False
+#     except UseList.DoesNotExist:
+#         raise Http404
+#     return render(request, 'history_main.html', {'history': history, 'name': history_name})
+
+
+
 @login_required
 def history_main(request, history_pk):
 
-    history = UseList.objects.filter(pk=history_pk) & \
-              UseList.objects.dates('pub_date', 'month')
-
-    if len(history) == 0:
-        history = False
-
-    return render(request, 'history_main.html', {'history': history})
+    try:
+        history = UseList.objects.filter(pk=history_pk)
+        history_name = AccountBooksName.objects.get(pk=history_pk)
+        if len(history) == 0:
+            history = False
+    except UseList.DoesNotExist:
+        raise Http404
+    return render(request, 'history_main.html', {'history': history, 'name': history_name})
 
 
 @login_required
