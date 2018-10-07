@@ -11,6 +11,18 @@ from .forms import *
 
 
 @login_required
+def history_main(request, history_pk):
+
+    history = UseList.objects.filter(pk=history_pk) & \
+              UseList.objects.dates('pub_date', 'month')
+
+    if len(history) == 0:
+        history = False
+
+    return render(request, 'history_main.html', {'history': history})
+
+
+@login_required
 def main_view(request):
 
     get_user = request.user
@@ -32,7 +44,6 @@ def make_account(request):
         if form.is_valid():
             account = form.save(commit=False)
             account.p_cnt = 1
-            account.language = "kor"
             account.create_at = timezone.now()
             account.create_user = request.user
             account.save()

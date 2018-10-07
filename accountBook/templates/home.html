@@ -26,7 +26,8 @@
                  {% for item in list %}
                     <tr>
                         <td>
-                            <a href="#">{{ item.account_id.account_name }}</a>
+                            <a href="{% url 'history_main' item.account_id.pk %}">{{ item.account_id.account_name }}</a>
+
                         </td>
                         <td>{{ item.account_id.p_cnt }}</td>
                         <td>{{ item.account_id.create_user }}</td>

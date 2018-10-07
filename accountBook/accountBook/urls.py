@@ -33,6 +33,8 @@ urlpatterns = [
     path('signup/', account_views.sign_up, name='signup'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 
+    path('history_main/<int:pk>', views.history_main, name='history_main'),
+
     path('make_account/', views.make_account, name='make_account'),
 
     path('home/', views.main_view, name='home')

@@ -1,6 +1,11 @@
 from django import forms
 from .models import *
 
+MONEY_COUNTRY = (
+        ('k', "kor"),
+        ('j', "jp")
+    )
+
 
 class MakeAccountForm(forms.ModelForm):
     account_name = forms.CharField(
@@ -9,12 +14,11 @@ class MakeAccountForm(forms.ModelForm):
         help_text="가계부 이름을 입력해 주세요."
     )
 
+    money = forms.ChoiceField(choices=MONEY_COUNTRY)
+
     class Meta:
         model = AccountBooksName
-        fields = ['account_name']
-
-
-
+        fields = ['account_name', 'money']
 
 """
      message = forms.CharField(

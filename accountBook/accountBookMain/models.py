@@ -9,10 +9,16 @@ class AccountBooksName(models.Model):
     """
         가계부 리스트 테이블
     """
+
+    MONEY_COUNTRY = (
+        ('k', "kor"),
+        ('j', "jp")
+    )
+
     account_id = models.AutoField(primary_key=True)
     account_name = models.CharField(max_length=100)
     p_cnt = models.IntegerField(default=0)
-    language = models.CharField(max_length=30)  # 언어설정 칼럼
+    money = models.CharField(max_length=1, choices=MONEY_COUNTRY)  # 언어설정 칼럼
     create_at = models.DateTimeField(auto_now_add=True)
     create_user = models.CharField(max_length=100, null=False)
 
@@ -49,4 +55,4 @@ class UseList(models.Model):
     price = models.IntegerField(null=False)
     user = models.ForeignKey(User, related_name='+', on_delete=models.CASCADE)
     create_at = models.DateTimeField(auto_now_add=True)
-    del_user = models.ForeignKey(User, related_name='+', on_delete=models.CASCADE)
+    del_user = models.CharField(max_length=200)
