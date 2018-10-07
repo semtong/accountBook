@@ -23,7 +23,7 @@ from django.contrib.auth import views as auth_views
 from account import views as account_views
 
 # main view
-from accountBookMain import views as home
+from accountBookMain import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -33,5 +33,5 @@ urlpatterns = [
     path('signup/', account_views.sign_up, name='signup'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 
-    path('home/', home.home, name='home')
+    path('home/', views.MainView, name='home')
 ]

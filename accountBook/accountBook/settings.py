@@ -40,7 +40,9 @@ INSTALLED_APPS = [
 
     'widget_tweaks',
 
-    'account'
+    'account',
+    'accountBookMain',
+
 ]
 
 MIDDLEWARE = [

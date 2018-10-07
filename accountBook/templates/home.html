@@ -1,12 +1,24 @@
-<!--<!DOCTYPE html>-->
-<!--<html lang="en">-->
-<!--<head>-->
-    <!--<meta charset="UTF-8">-->
-    <!--<title>Title</title>-->
-<!--</head>-->
-<!--<body>-->
-
-<!--</body>-->
-<!--</html>-->
-
 {% extends 'base.html' %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active">Main</li>
+{% endblock %}
+
+{% block contents %}
+
+    {% if list is False %}
+
+        <h3>등록된 가계부가 없습니다.</h3>
+        <a class="btn btn-success" href="#" role="button">가계부 만들기</a>
+        <button type="button" class="btn btn btn-info">
+            초대장
+            <span class="badge badge-light">1</span>
+            <span class="sr-only">unread messages</span>
+        </button>
+    {% else %}
+
+        <!-- 작성중 -->
+        {{ list }}
+    {% endif %}
+
+{% endblock %}

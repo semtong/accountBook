@@ -1,5 +1,5 @@
-{% load static %}
-<!doctype html>
+{% load static %}<!DOCTYPE html>
+<html>
     <head>
         <meta charset="utf-8">
         <title>{% block title %}Our account book{% endblock %}</title>
@@ -34,28 +34,18 @@
                     </div>
                 </div>
             </nav>
-            <div class="collapse navbar-collapse" id="mainMenu">
-                {% if user.is_authenticated %}
-                    <ul class="navbar-nav mr-auto">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="userMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                {{user.username}}
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
-                                <a class="dropdown-item" href="#">My account</a>
-                                <a class="dropdown-item" href="#">Change password</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="{% url 'logout' %}">Log out</a>
-                            </div>
-                        </li>
-                    </ul>
-                {% else %}
-                {% endif %}
+            <div class="container">
+
+                <ol class="breadcrumb my-4">
+                    {% block breadcrumb %}
+                    {% endblock%}
+                </ol>
+                {% block contents %}
+                {% endblock %}
             </div>
         {% endblock body %}
     <script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
     <script src="{% static 'js/popper.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     </body>
-
-</html>
+<html>
