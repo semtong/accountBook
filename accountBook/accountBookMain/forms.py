@@ -31,9 +31,14 @@ class WriteHistory(forms.ModelForm):
 
     price = forms.IntegerField(
         required=True,
-        help_text="사용금액을 입력해 주세요."
+        help_text="사용금액을 입력해 주세요.",
+    )
+
+    division = forms.IntegerField(
+        required=True,
+        help_text="사용자 수를 입력해 주세요."
     )
 
     class Meta:
         model = UseList
-        fields = ['use_history', 'price']
+        fields = ['use_history', 'price', 'division']
