@@ -55,4 +55,4 @@ class UseList(models.Model):
     price = models.IntegerField(null=False)
     user = models.ForeignKey(User, related_name='+', on_delete=models.CASCADE)
     create_at = models.DateTimeField(auto_now_add=True)
-    del_user = models.CharField(max_length=200)
+    del_user = models.CharField(max_length=200, blank=True)

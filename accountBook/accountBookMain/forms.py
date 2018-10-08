@@ -20,16 +20,20 @@ class MakeAccountForm(forms.ModelForm):
         model = AccountBooksName
         fields = ['account_name', 'money']
 
-"""
-     message = forms.CharField(
-        widget=forms.Textarea(
-            attrs={'rows': 5, 'placeholder': 'What is on your mind?'}
-        ),
-        max_length=4000,
-        help_text='The max length of the text is 4000.'
+
+class WriteHistory(forms.ModelForm):
+
+    use_history = forms.CharField(
+        max_length=450,
+        required=True,
+        help_text="사용내용을 입력해 주세요."
     )
 
-            class Meta:
-            model = Topic
-            fields = ['subject', 'message']
-"""
+    price = forms.IntegerField(
+        required=True,
+        help_text="사용금액을 입력해 주세요."
+    )
+
+    class Meta:
+        model = UseList
+        fields = ['use_history', 'price']

@@ -6,13 +6,35 @@
 {% endblock %}
 
 {% block contents %}
-    {% if history is False %}
-
+    {% if history is None %}
         <p>등록된 사용내역이 없습니다.</p>
-        <a type="button" href="#" class="btn btn-success">사용내역 등록하기</a>
+        <a type="button" href="{% url 'write_history' name.pk %}" class="btn btn-success">사용내역 등록하기</a>
         <a type="button" href="{% url 'home' %}" class="btn btn-outline-warning">되돌아가기</a>
-
     {% else %}
+
+        <a type="button" href="{% url 'write_history' name.pk %}" class="btn btn-success" style="margin-bottom:5px;">사용내역 등록하기</a>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col" class="table-info">Use History</th>
+                    <th scope="col" class="table-info">Price</th>
+                    <th scope="col" class="table-info">Writer</th>
+                    <th scope="col" class="table-info">Create at</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in history %}
+                    <tr>
+                        <td scope="row">{{ i.use_history }}</td>
+                        <td>{{ i.price }}</td>
+                        <td>{{ i.user }}</td>
+                        <td>{{ i.create_at }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
 
     {% endif %}
 {% endblock %}

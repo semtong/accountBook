@@ -22,16 +22,34 @@ from .forms import *
 #         raise Http404
 #     return render(request, 'history_main.html', {'history': history, 'name': history_name})
 
+@login_required
+def write_history(request, history_pk):
+
+    book_name = AccountBooksName.objects.get(pk=history_pk)
+
+    if request.method == 'POST':
+        form = WriteHistory(request.POST)
+        if form.is_valid():
+            regi = form.save(commit=False)
+            regi.book_name = AccountBooksName.objects.get(account_id=history_pk)
+            regi.user = request.user
+            regi.create_at = timezone.now()
+            regi.save()
+
+            return redirect('history_main', history_pk=history_pk)
+    else:
+        form = WriteHistory()
+    return render(request, 'write_history.html', {'form': form, 'book_name': book_name})
 
 
 @login_required
 def history_main(request, history_pk):
 
     try:
-        history = UseList.objects.filter(pk=history_pk)
+        history = UseList.objects.filter(book_name=history_pk).order_by('-create_at')
         history_name = AccountBooksName.objects.get(pk=history_pk)
         if len(history) == 0:
-            history = False
+            history = None
     except UseList.DoesNotExist:
         raise Http404
     return render(request, 'history_main.html', {'history': history, 'name': history_name})
