@@ -53,6 +53,7 @@ class UseList(models.Model):
     book_name = models.ForeignKey(AccountBooksName, related_name='+', on_delete=models.CASCADE)
     use_history = models.CharField(max_length=450, null=False)
     price = models.IntegerField(null=False)
+    division = models.IntegerField(null=False)
     user = models.ForeignKey(User, related_name='+', on_delete=models.CASCADE)
     create_at = models.DateTimeField(auto_now_add=True)
     del_user = models.CharField(max_length=200, blank=True)
