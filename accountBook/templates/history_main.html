@@ -18,7 +18,9 @@
                 <tr>
                     <th scope="col" class="table-info">Use History</th>
                     <th scope="col" class="table-info">Price</th>
+                    <th scope="col" class="table-info">Pay</th>
                     <th scope="col" class="table-info">Writer</th>
+                    <th scope="col" class="table-info">Division</th>
                     <th scope="col" class="table-info">Create at</th>
 
                 </tr>
@@ -28,7 +30,9 @@
                     <tr>
                         <td scope="row">{{ i.use_history }}</td>
                         <td>{{ i.price }}</td>
+                        <td>{{ i.val }}</td>
                         <td>{{ i.user }}</td>
+                        <td>{{ i.division }}</td>
                         <td>{{ i.create_at }}</td>
                     </tr>
                 {% endfor %}

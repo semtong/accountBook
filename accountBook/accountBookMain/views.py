@@ -10,22 +10,12 @@ from django.utils import timezone
 
 from .forms import *
 
-
-# @login_required
-# def write_history(request, history_pk):
-#     try:
-#         history = UseList.objects.filter(pk=history_pk)
-#         history_name = AccountBooksName.objects.get(pk=history_pk)
-#         if len(history) == 0:
-#             history = False
-#     except UseList.DoesNotExist:
-#         raise Http404
-#     return render(request, 'history_main.html', {'history': history, 'name': history_name})
-
 @login_required
 def write_history(request, history_pk):
 
     book_name = AccountBooksName.objects.get(pk=history_pk)
+    temp_p = AccountBooksName.objects.filter(account_id=history_pk)
+    people = str(temp_p[0].p_cnt)
 
     if request.method == 'POST':
         form = WriteHistory(request.POST)
@@ -33,13 +23,16 @@ def write_history(request, history_pk):
             regi = form.save(commit=False)
             regi.book_name = AccountBooksName.objects.get(account_id=history_pk)
             regi.user = request.user
+            regi.num = people
             regi.create_at = timezone.now()
             regi.save()
 
             return redirect('history_main', history_pk=history_pk)
+
     else:
+        # form = WriteHistory(my_arge=history_pk)
         form = WriteHistory()
-    return render(request, 'write_history.html', {'form': form, 'book_name': book_name})
+    return render(request, 'write_history.html', {'form': form, 'book_name': book_name, 'people': people})
 
 
 @login_required
@@ -47,6 +40,13 @@ def history_main(request, history_pk):
 
     try:
         history = UseList.objects.filter(book_name=history_pk).order_by('-create_at')
+        if len(history) > 0:
+            for i in history:
+                price = i.price
+                divide = i.division
+                my_val = int(price/divide)
+                i.val = my_val
+
         history_name = AccountBooksName.objects.get(pk=history_pk)
         if len(history) == 0:
             history = None

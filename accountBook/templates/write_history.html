@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'home' %}"> Main </a></li>
+    <li class="breadcrumb-item"><a href="{% url 'history_main' book_name.account_id %}">{{ book_name.account_name }}</a></li>
+    <li class="breadcrumb-item active">History Write</li>
+{% endblock %}
+
+{% block contents %}
+    <form method="POST" novalidate>
+        {% csrf_token %}
+        {% include 'includes/form.html' %}
+        <button type="submit" class="btn btn-success">Register</button>
+    </form>
+{% endblock %}
