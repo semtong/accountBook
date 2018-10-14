@@ -34,7 +34,7 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 
     # save add user
-    path('saveAccountUser/?P<store_id>\d+/<int:history>', views.save_account_user, name='saveAccountUser'),
+    path('saveAccountUser/<int:history>/<str:user_list>/', views.save_account_user, name='saveAccountUser'),
 
     # add account user
     path('addAccountUser/<int:history>/', views.add_account_user, name="addAccountUser"),

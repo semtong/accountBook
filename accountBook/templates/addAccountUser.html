@@ -8,6 +8,7 @@
 {% endblock %}
 
 {% block contents %}
+
     <table class="table table-striped">
         <thead class="thead-dark">
             <tr>
@@ -23,7 +24,7 @@
                         <td> {{ i.username }} </td>
                         <td> {{ i.email }} </td>
                         <td align="center">
-                            <input type="checkbox" class="checkBox" aria-label="Checkbox for following text input " value="{{ i.pk }}" name="user">
+                            <input type="checkbox" class="checkBox" aria-label="Checkbox for following text input " value="{{ i.pk }}" name="user[]">
                         </td>
                     </tr>
                 {% endif %}
@@ -33,25 +34,27 @@
     <div id="add_alert" class="alert alert-danger" role="alert" style="display:none">
         추가할 사용자를 선택해 주세요.
     </div>
-    <a class="btn btn-secondary" href="#" role="button" style="float: right;" onclick="active()">Add User</a>
+    <a class="btn btn-secondary" role="button" style="float: right;" onclick="active()">Add User</a>
     <script language="JavaScript">
+
         function active(){
-            var user_list ="";
-            var size = document.getElementsByName("user").length;
+            temp = '';
+            ul = ''
+            var size = document.getElementsByName("user[]").length;
             for(var i = 0; i < size; i++){
-                if(document.getElementsByName("user")[i].checked == true){
-                    val = document.getElementsByName("user")[i].value;
-                    user_list = val + ',';
+                if(document.getElementsByName("user[]")[i].checked == true){
+                    val = document.getElementsByName("user[]")[i].value;
+
+                    temp += val+'_';
+                    ul += temp
                 }
             }
-
-            if (user_list.length == 0){
+            if (temp.length == 0){
                 x = document.getElementById("add_alert");
                 x.style.display = "block";
+                return;
             }
-
-            console.log(user_list)
-
+            document.location.href = "{% url 'saveAccountUser' account.account_id 'temp' %}".replace(/temp/,ul);
         }
     </script>
 {% endblock %}

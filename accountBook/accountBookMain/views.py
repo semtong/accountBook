@@ -11,17 +11,34 @@ from django.utils import timezone
 from .forms import *
 
 
-def save_account_user(request, user, history):
-    print('kkkkk')
+@login_required
+def save_account_user(request, history, user_list):
 
+    add_user = user_list.split("_")
+    temp_pk = request.user.pk
+    user = User.objects.get(pk=temp_pk)
+
+    account = AccountBooksName.objects.get(pk=history)
+
+    length = len(add_user)
+    for i in range(0, length-1):
+        name = User.objects.get(pk=add_user[i])
+        Invitation.objects.create(sender=user, receiver=name, account=account)
+
+    account_obj = AccountBooksName.objects.get(account_id=history)
+    all_user = User.objects.all()
+
+    return render(request, "addAccountUser.html", {'account': account_obj, 'users': all_user})
 
 @login_required
 def add_account_user(request, history):
     account_obj = AccountBooksName.objects.get(account_id=history)
-
     all_user = User.objects.all()
 
-    return render(request, "addAccountUser.html", {'account': account_obj, 'users': all_user})
+    invit = Invitation.objects.filter(account=history)
+    party = PartyBelongTo.objects.filter(account_id=history)
+
+    return render(request, "addAccountUser.html", {'account': account_obj, 'users': all_user, 'invit': invit, 'party':party})
 
 
 @login_required
