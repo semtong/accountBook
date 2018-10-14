@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'home' %}"> Main </a></li>
+    <li class="breadcrumb-item"><a href="{% url 'history_main' account.account_id %}">{{ account.account_name }}</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'accountListUser' account.account_id %}">{{ account.account_name }} User List</a></li>
+    <li class="breadcrumb-item active">{{ account.account_name }} Add User</a></li>
+{% endblock %}
+
+{% block contents %}
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">User Id</th>
+                <th scope="col">User Email</th>
+                <th scope="col" align="left">Add Check</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in users %}
+                {% if user.username != i.username %}
+                    <tr>
+                        <td> {{ i.username }} </td>
+                        <td> {{ i.email }} </td>
+                        <td align="center">
+                            <input type="checkbox" class="checkBox" aria-label="Checkbox for following text input " value="{{ i.pk }}" name="user">
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+    <div id="add_alert" class="alert alert-danger" role="alert" style="display:none">
+        추가할 사용자를 선택해 주세요.
+    </div>
+    <a class="btn btn-secondary" href="#" role="button" style="float: right;" onclick="active()">Add User</a>
+    <script language="JavaScript">
+        function active(){
+            var user_list ="";
+            var size = document.getElementsByName("user").length;
+            for(var i = 0; i < size; i++){
+                if(document.getElementsByName("user")[i].checked == true){
+                    val = document.getElementsByName("user")[i].value;
+                    user_list = val + ',';
+                }
+            }
+
+            if (user_list.length == 0){
+                x = document.getElementById("add_alert");
+                x.style.display = "block";
+            }
+
+            console.log(user_list)
+
+        }
+    </script>
+{% endblock %}

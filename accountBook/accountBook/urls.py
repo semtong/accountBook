@@ -33,7 +33,17 @@ urlpatterns = [
     path('signup/', account_views.sign_up, name='signup'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 
-    path('write_history/<int:history_pk>/', views.write_history, name='write_history'), # history write
+    # save add user
+    path('saveAccountUser/?P<store_id>\d+/<int:history>', views.save_account_user, name='saveAccountUser'),
+
+    # add account user
+    path('addAccountUser/<int:history>/', views.add_account_user, name="addAccountUser"),
+
+    # look user list
+    path('accountListUser/<int:history>/', views.account_user_list, name='accountListUser'),
+
+    # history write
+    path('write_history/<int:history_pk>/', views.write_history, name='write_history'),
 
     path('history_main/<int:history_pk>/', views.history_main, name='history_main'),
 

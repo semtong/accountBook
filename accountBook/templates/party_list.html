@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'home' %}"> Main </a></li>
+    <li class="breadcrumb-item"><a href="{% url 'history_main' info.account_id %}">{{ info.account_name }}</a></li>
+    <li class="breadcrumb-item active"> {{ info.account_name }} User List</li>
+{% endblock %}
+
+{% block contents %}
+    {% if user_list is False %}
+        <h3>등록된 사용자가 없습니다.</h3>
+        <a class="btn btn-warning" href="{% url 'addAccountUser' info.account_id %}" role="button">사용자 등록하기</a>
+    {% else %}
+        <p>kik</p>
+    {% endif %}
+{% endblock %}

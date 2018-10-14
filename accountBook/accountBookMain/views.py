@@ -10,6 +10,40 @@ from django.utils import timezone
 
 from .forms import *
 
+
+def save_account_user(request, user, history):
+    print('kkkkk')
+
+
+@login_required
+def add_account_user(request, history):
+    account_obj = AccountBooksName.objects.get(account_id=history)
+
+    all_user = User.objects.all()
+
+    return render(request, "addAccountUser.html", {'account': account_obj, 'users': all_user})
+
+
+@login_required
+def account_user_list(request, history):
+    get_obj = PartyBelongTo.objects.filter(account_id=history)
+
+    info_account = get_obj[0].account_id
+
+    user_list = list()
+    for i in get_obj:
+        user_id = i.user_id
+        user_info = User.objects.get(username=user_id)
+        user_list.append(user_info)
+
+    if len(user_list) == 1:
+        user_list = False
+    else:
+        pass
+
+    return render(request, 'party_list.html', {'user_list': user_list, 'info': info_account})
+
+
 @login_required
 def write_history(request, history_pk):
 
