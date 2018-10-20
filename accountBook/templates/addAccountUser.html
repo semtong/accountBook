@@ -9,17 +9,20 @@
 
 {% block contents %}
 
-    <table class="table table-striped">
-        <thead class="thead-dark">
-            <tr>
-                <th scope="col">User Id</th>
-                <th scope="col">User Email</th>
-                <th scope="col" align="left">Add Check</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for i in users %}
-                {% if user.username != i.username %}
+    {% if user_list == 0 %}
+        <h3>초대할 수 있는 사용자가 없습니다.</h3>
+    {% else %}
+
+        <table class="table table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">User Id</th>
+                    <th scope="col">User Email</th>
+                    <th scope="col" align="left">Add Check</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in user_list %}
                     <tr>
                         <td> {{ i.username }} </td>
                         <td> {{ i.email }} </td>
@@ -27,14 +30,15 @@
                             <input type="checkbox" class="checkBox" aria-label="Checkbox for following text input " value="{{ i.pk }}" name="user[]">
                         </td>
                     </tr>
-                {% endif %}
-            {% endfor %}
-        </tbody>
-    </table>
-    <div id="add_alert" class="alert alert-danger" role="alert" style="display:none">
-        추가할 사용자를 선택해 주세요.
-    </div>
-    <a class="btn btn-secondary" role="button" style="float: right;" onclick="active()">Add User</a>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div id="add_alert" class="alert alert-danger" role="alert" style="display:none">
+            추가할 사용자를 선택해 주세요.
+        </div>
+        <a class="btn btn-secondary" role="button" style="float: right;" onclick="active()">Add User</a>
+
+    {% endif %}
     <script language="JavaScript">
 
         function active(){
@@ -54,7 +58,7 @@
                 x.style.display = "block";
                 return;
             }
-            document.location.href = "{% url 'saveAccountUser' account.account_id 'temp' %}".replace(/temp/,ul);
+            document.location.href = "{% url 'sendAccountInvite' account.account_id 'temp' %}".replace(/temp/,ul);
         }
     </script>
 {% endblock %}

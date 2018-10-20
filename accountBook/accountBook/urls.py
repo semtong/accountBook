@@ -34,7 +34,7 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 
     # save add user
-    path('saveAccountUser/<int:history>/<str:user_list>/', views.save_account_user, name='saveAccountUser'),
+    path('sendAccountInvite/<int:history>/<str:user_list>/', views.send_account_invite, name='sendAccountInvite'),
 
     # add account user
     path('addAccountUser/<int:history>/', views.add_account_user, name="addAccountUser"),

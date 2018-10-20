@@ -8,8 +8,13 @@
 
 {% block contents %}
     {% if user_list is False %}
-        <h3>등록된 사용자가 없습니다.</h3>
-        <a class="btn btn-warning" href="{% url 'addAccountUser' info.account_id %}" role="button">사용자 등록하기</a>
+        {% if add_val == 0 %}
+            <h3>초대할 수 있는 사용자가없습니다.</h3>
+            <p>초대장을 발송한 사용자의 초대수락을 기다리고 있습니다.</p>
+        {% else %}
+            <h3>등록된 사용자가 없습니다.</h3>
+            <a class="btn btn-warning" href="{% url 'addAccountUser' info.account_id %}" role="button">사용자 등록하기</a>
+        {% endif %}
     {% else %}
         <p>kik</p>
     {% endif %}

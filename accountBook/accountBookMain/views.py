@@ -12,7 +12,7 @@ from .forms import *
 
 
 @login_required
-def save_account_user(request, history, user_list):
+def send_account_invite(request, history, user_list):
 
     add_user = user_list.split("_")
     temp_pk = request.user.pk
@@ -26,19 +26,18 @@ def save_account_user(request, history, user_list):
         Invitation.objects.create(sender=user, receiver=name, account=account)
 
     account_obj = AccountBooksName.objects.get(account_id=history)
-    all_user = User.objects.all()
+    invit_module = MethodModule()
+    val = invit_module.filter_invitation_user(history)
 
-    return render(request, "addAccountUser.html", {'account': account_obj, 'users': all_user})
+    return render(request, "addAccountUser.html", {'account': account_obj, 'user_list': val})
 
 @login_required
 def add_account_user(request, history):
     account_obj = AccountBooksName.objects.get(account_id=history)
-    all_user = User.objects.all()
 
-    invit = Invitation.objects.filter(account=history)
-    party = PartyBelongTo.objects.filter(account_id=history)
-
-    return render(request, "addAccountUser.html", {'account': account_obj, 'users': all_user, 'invit': invit, 'party':party})
+    invit_module = MethodModule()
+    val = invit_module.filter_invitation_user(history)
+    return render(request, "addAccountUser.html", {'account': account_obj, 'user_list': val})
 
 
 @login_required
@@ -58,7 +57,10 @@ def account_user_list(request, history):
     else:
         pass
 
-    return render(request, 'party_list.html', {'user_list': user_list, 'info': info_account})
+    invit_module = MethodModule()
+    val = invit_module.filter_invitation_user(history)
+
+    return render(request, 'party_list.html', {'user_list': user_list, 'info': info_account, 'add_val': val})
 
 
 @login_required
@@ -141,3 +143,38 @@ def make_account(request):
     else:
         form = MakeAccountForm()
     return render(request, 'makeAccount.html', {'form': form})
+
+
+class MethodModule:
+
+    @staticmethod
+    def filter_invitation_user(history):
+
+        all_user = User.objects.all()
+
+        invitation = Invitation.objects.filter(account=history)
+
+        invit = list()
+        for i in invitation:
+            invit.append(i.receiver)
+
+        all_party = PartyBelongTo.objects.filter(account_id=history)
+
+        party = list()
+        for i in all_party:
+            party.append(i.user_id)
+
+        show_user = list()
+        for i in all_user:
+            if not i in invit:
+                if not i in party:
+                    show_user.append(i)
+
+        length = len(show_user)
+
+        if length == 0:
+            val = 0
+        else:
+            val = show_user
+
+        return val
