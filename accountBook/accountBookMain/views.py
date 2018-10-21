@@ -12,6 +12,20 @@ from .forms import *
 
 
 @login_required
+def pw_change(request, pk):
+    return render(request, 'pwChange.html')
+
+
+@login_required
+def my_account(requst, pk):
+
+    card = Invitation.objects.filter(receiver=pk)
+    length = len(card)
+
+    return render(requst, "myAccountMain.html", {'card': length})
+
+
+@login_required
 def send_account_invite(request, history, user_list):
 
     add_user = user_list.split("_")

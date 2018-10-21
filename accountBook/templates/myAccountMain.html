@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'home' %}"> Main </a></li>
+    <li class="breadcrumb-item active">{{ user.username }} Account</li>
+{% endblock %}
+
+{% block contents %}
+    <div class = 'container'>
+        <div class="row">
+                <div class="col-sm-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">새로운 가계부 초대알림</h5>
+                            {% if card > 0 %}
+                                <p class="card-text">{{ card }}건의 초대 알림이 있습니다.</p>
+                                <a href="#" class="btn btn-primary">초대 확인하기</a>
+                            {% else %}
+                                <p>초대알림이 없습니다.</p>
+                            {% endif %}
+                        </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">비밀번호 변경</h5>
+                        <p class="card-text">새로운 비밀번호로 변경을 합니다.</p>
+                        <a href="{% url 'pwChange'%}" class="btn btn-danger">비밀번호 변경</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -33,6 +33,15 @@ urlpatterns = [
     path('signup/', account_views.sign_up, name='signup'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 
+    # password completed
+    path('settings/password/done/', auth_views.PasswordChangeDoneView.as_view(template_name='password_change_done.html'), name='password_change_done'),
+
+    # password change
+    path('passwordChange/', auth_views.PasswordChangeView.as_view(template_name='pwChange.html'), name='pwChange'),
+
+    # my account
+    path('myAccount/<int:pk>', views.my_account, name='myAccount'),
+
     # save add user
     path('sendAccountInvite/<int:history>/<str:user_list>/', views.send_account_invite, name='sendAccountInvite'),
 
