@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'home' %}"> Main </a></li>
+    <li class="breadcrumb-item"><a href="{% url 'myAccount' user.pk %}">{{ user.username }} Account</a></li>
+    <li class="breadcrumb-item active">Invitation List</li>
+{% endblock %}
+
+{% block contents %}
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <td scope="col">Account Book Name</td>
+                <td scope="col">Sender</td>
+                <td scope="col">Receiver</td>
+                <td scope="col">Receive Time</td>
+                <td scope="col">Accept</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in val %}
+                <tr>
+                    <td>{{ i.account.account_name }}</td>
+                    <td>{{ i.sender }}</td>
+                    <td>{{ i.receiver }}</td>
+                    <td>{{ i.created_at }}</td>
+                    <td align="center">
+                        <input type="checkbox" class="checkBox" aria-label="Checkbox for following text input " value="{{ i.pk }}" name="invitation[]">
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div id="add_alert" class="alert alert-danger" role="alert" style="display:none">
+            추가할 사용자를 선택해 주세요.
+    </div>
+    <a class="btn btn-success" role="button" style="float: right; color:white" onclick="active()">Add User</a>
+    <script language="JavaScript">
+        function active(){
+            temp = '';
+            
+            ul = ''
+            var size = document.getElementsByName("invitation[]").length;
+            for(var i = 0; i < size; i++){
+                if(document.getElementsByName("invitation[]")[i].checked == true){
+                    val = document.getElementsByName("invitation[]")[i].value;
+                    temp = ''
+                    temp += val+'_';
+                    ul += temp
+                }
+            }
+            if (temp.length == 0){
+                x = document.getElementById("add_alert");
+                x.style.display = "block";
+                return;
+            }
+            document.location.href = "{% url 'acceptBook' 'temp' %}".replace(/temp/,ul);
+        }
+    </script>
+{% endblock %}

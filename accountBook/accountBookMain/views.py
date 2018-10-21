@@ -12,14 +12,46 @@ from .forms import *
 
 
 @login_required
-def pw_change(request, pk):
-    return render(request, 'pwChange.html')
+def accept_account(request, book_list):
+    # return redirect('history_main', history_pk=history_pk)
+
+    book_pk = book_list.split("_")
+    pk = request.user.pk
+
+    length = len(book_pk)
+
+    for i in range(0, length-1):
+        # 초대테이블 승인업데이트
+        invit = Invitation.objects.get(id=book_pk[i])
+        invit.auth_ac = 1
+        invit.save()
+
+        # 테이블리스트에 인원수 추가
+        account_book = AccountBooksName.objects.get(pk=invit.account.account_id)
+        person_num = account_book.p_cnt + 1
+
+        account_book.p_cnt = person_num
+        account_book.save()
+
+        # 소속 유저 추가
+        PartyBelongTo.objects.create(user_id=request.user, account_id=account_book)
+
+    return redirect('myAccount', pk=pk)
+
+
+@login_required
+def invitation_list(request):
+
+    user = request.user.pk
+
+    val = Invitation.objects.filter(receiver=user, auth_ac=0)
+    return render(request, 'invitationList.html', {'val': val})
 
 
 @login_required
 def my_account(requst, pk):
 
-    card = Invitation.objects.filter(receiver=pk)
+    card = Invitation.objects.filter(receiver=pk, auth_ac=0)
     length = len(card)
 
     return render(requst, "myAccountMain.html", {'card': length})
@@ -45,6 +77,7 @@ def send_account_invite(request, history, user_list):
 
     return render(request, "addAccountUser.html", {'account': account_obj, 'user_list': val})
 
+
 @login_required
 def add_account_user(request, history):
     account_obj = AccountBooksName.objects.get(account_id=history)
@@ -60,21 +93,11 @@ def account_user_list(request, history):
 
     info_account = get_obj[0].account_id
 
-    user_list = list()
-    for i in get_obj:
-        user_id = i.user_id
-        user_info = User.objects.get(username=user_id)
-        user_list.append(user_info)
+    length = len(get_obj)
+    if length < 2:
+        get_obj = False
 
-    if len(user_list) == 1:
-        user_list = False
-    else:
-        pass
-
-    invit_module = MethodModule()
-    val = invit_module.filter_invitation_user(history)
-
-    return render(request, 'party_list.html', {'user_list': user_list, 'info': info_account, 'add_val': val})
+    return render(request, 'party_list.html', {'user_list': get_obj, 'info': info_account})
 
 
 @login_required

@@ -14,7 +14,7 @@
                             <h5 class="card-title">새로운 가계부 초대알림</h5>
                             {% if card > 0 %}
                                 <p class="card-text">{{ card }}건의 초대 알림이 있습니다.</p>
-                                <a href="#" class="btn btn-primary">초대 확인하기</a>
+                                <a href="{% url 'invitationList' %}" class="btn btn-primary">초대 확인하기</a>
                             {% else %}
                                 <p>초대알림이 없습니다.</p>
                             {% endif %}
