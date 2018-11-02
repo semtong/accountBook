@@ -9,6 +9,8 @@ from .models import *
 from django.utils import timezone
 
 from .forms import *
+from datetime import datetime
+from django.db.models import Avg, Count, Min, Sum
 
 
 @login_required
@@ -129,7 +131,13 @@ def write_history(request, history_pk):
 def history_main(request, history_pk):
 
     try:
+        save = int()
+        current_year = datetime.now().year
+        current_month = datetime.now().month
+
         history = UseList.objects.filter(book_name=history_pk).order_by('-create_at')
+        this_month = UseList.objects.filter(book_name=history_pk, create_at__year=current_year, create_at__month=current_month)
+
         if len(history) > 0:
             for i in history:
                 price = i.price
@@ -137,12 +145,20 @@ def history_main(request, history_pk):
                 my_val = int(price/divide)
                 i.val = my_val
 
-        history_name = AccountBooksName.objects.get(pk=history_pk)
-        if len(history) == 0:
+            # 이번달 총액수
+            save = 0
+            for money in this_month:
+                save += money.price
+
+        elif len(history) == 0:
             history = None
+            save = 0
+
+        history_name = AccountBooksName.objects.get(pk=history_pk)
+
     except UseList.DoesNotExist:
         raise Http404
-    return render(request, 'history_main.html', {'history': history, 'name': history_name})
+    return render(request, 'history_main.html', {'history': history, 'name': history_name, 'sum': save, 'month': current_month})
 
 
 @login_required
