@@ -37,8 +37,51 @@
             추가할 사용자를 선택해 주세요.
         </div>
         <a class="btn btn-secondary" role="button" style="float: right;" onclick="active()">Add User</a>
-
     {% endif %}
+
+    <!-- for paging fbv -->
+    {% if account.has_other_pages %}
+        <nav aria-label="Account pagination" class="mb-4">
+            <ul class="pagination">
+                {% if account.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ account.previous_page_number }}">Previous</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">Previous</span>
+                    </li>
+                {% endif %}
+
+                {% for page_num in account.paginator.page_range %}
+                    {% if account.number == page_num %}
+                        <li class="page-item active">
+                            <span class="page-link">
+                                {{ page_num }}
+                                <span class="sr-only">(current)</span>
+                            </span>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                        </li>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if account.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ account.next_page_number }}">Next</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">Next</span>
+                        </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+
+
     <script language="JavaScript">
 
         function active(){

@@ -64,5 +64,5 @@ urlpatterns = [
 
     path('make_account/', views.make_account, name='make_account'),
 
-    path('home/', views.main_view, name='home')
+    path('home/', views.MainView.as_view(), name='home')
 ]

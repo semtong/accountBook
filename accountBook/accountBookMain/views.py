@@ -10,8 +10,12 @@ from django.utils import timezone
 
 from .forms import *
 from datetime import datetime
-from django.db.models import Avg, Count, Min, Sum
 
+from django.utils.decorators import method_decorator
+from django.views.generic import ListView
+
+# for paging
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 @login_required
 def accept_account(request, book_list):
@@ -86,7 +90,19 @@ def add_account_user(request, history):
 
     invit_module = MethodModule()
     val = invit_module.filter_invitation_user(history)
-    return render(request, "addAccountUser.html", {'account': account_obj, 'user_list': val})
+
+    # for paging
+    page = request.GET.get('page', 1)
+    paginator = Paginator(account_obj, 20)
+
+    try:
+        obj = paginator.page(page)
+    except PageNotAnInteger:
+        obj = paginator.page(1)
+    except EmptyPage:
+        obj = paginator.page(paginator.num_pages)
+
+    return render(request, "addAccountUser.html", {'account': obj, 'user_list': val})
 
 
 @login_required
@@ -99,7 +115,18 @@ def account_user_list(request, history):
     if length < 2:
         get_obj = False
 
-    return render(request, 'party_list.html', {'user_list': get_obj, 'info': info_account})
+    # for paging
+    page = request.GET.get('page', 1)
+    paginator = Paginator(get_obj, 20)
+
+    try:
+        obj = paginator.page(page)
+    except PageNotAnInteger:
+        obj = paginator.page(1)
+    except EmptyPage:
+        obj = paginator.page(paginator.num_pages)
+
+    return render(request, 'party_list.html', {'user_list': obj, 'info': info_account})
 
 
 @login_required
@@ -130,6 +157,11 @@ def write_history(request, history_pk):
 @login_required
 def history_main(request, history_pk):
 
+    history_name = None
+    save = None
+    current_month = None
+
+    paginator = None
     try:
         save = int()
         current_year = datetime.now().year
@@ -156,23 +188,44 @@ def history_main(request, history_pk):
 
         history_name = AccountBooksName.objects.get(pk=history_pk)
 
+        # for paging
+        page = request.GET.get('page', 1)
+        paginator = Paginator(history, 20)
+
+        user_list =paginator.page(page)
     except UseList.DoesNotExist:
         raise Http404
-    return render(request, 'history_main.html', {'history': history, 'name': history_name, 'sum': save, 'month': current_month})
+    except PageNotAnInteger:
+        user_list = paginator.page(1)
+    except EmptyPage:
+        user_list = paginator.page(paginator.num_pages)
+
+    return render(request, 'history_main.html', {'history': user_list, 'name': history_name, 'sum': save, 'month': current_month})
 
 
-@login_required
-def main_view(request):
+# @login_required
+# def main_view(request):
+#
+#     get_user = request.user
+#     get_list = PartyBelongTo.objects.filter(user_id=get_user)
+#
+#     if len(get_list) == 0:
+#         get_list = False
+#
+#     # my_list = AccountBooksName.objects.filter(account_name=get_list.account_id)
+#
+#     return render(request, 'home.html', {'list': get_list})
 
-    get_user = request.user
-    get_list = PartyBelongTo.objects.filter(user_id=get_user)
 
-    if len(get_list) == 0:
-        get_list = False
+@method_decorator(login_required, name='dispatch')
+class MainView(ListView):
+    model = PartyBelongTo
+    context_object_name = 'list'
+    template_name = 'home.html'
 
-    # my_list = AccountBooksName.objects.filter(account_name=get_list.account_id)
-
-    return render(request, 'home.html', {'list': get_list})
+    def get_queryset(self):
+        get_user = self.request.user
+        return PartyBelongTo.objects.filter(user_id=get_user)
 
 
 @login_required
