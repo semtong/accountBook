@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
 
+<!--통화 및 시간표시 기능-->
+{% load humanize %}
+
 {% block breadcrumb %}
     <li class="breadcrumb-item active">Main</li>
 {% endblock %}
@@ -27,7 +30,7 @@
                         </td>
                         <td>{{ item.account_id.p_cnt }}</td>
                         <td>{{ item.account_id.create_user }}</td>
-                        <td>{{ item.account_id.create_at }}</td>
+                        <td>{{ item.account_id.create_at|naturaltime }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

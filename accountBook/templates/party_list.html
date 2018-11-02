@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
 
+<!--통화 및 시간표시 기능-->
+{% load humanize %}
+
 {% block breadcrumb %}
     <li class="breadcrumb-item"><a href="{% url 'home' %}"> Main </a></li>
     <li class="breadcrumb-item"><a href="{% url 'history_main' info.account_id %}">{{ info.account_name }}</a></li>
@@ -28,13 +31,13 @@
                         <tr>
                             <td> {{ i.user_id.username }} </td>
                             <td> {{ i.user_id.email }} </td>
-                            <td> {{ i.create_at }}</td>
+                            <td> {{ i.create_at|naturaltime }}</td>
                         </tr>
                     {% else %}
                         <tr>
                             <td> {{ i.user_id.username }} <span class="badge badge-light">Me</span></td>
                             <td> {{ i.user_id.email }} </td>
-                            <td> {{ i.create_at }}</td>
+                            <td> {{ i.create_at|naturaltime }}</td>
                         </tr>
 
                     {% endif %}
