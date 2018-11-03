@@ -116,9 +116,8 @@ def account_user_list(request, history):
 
     length = len(get_obj)
     if length < 2:
-        obj = None
+        obj = False
     else:
-        get_obj = False
 
         # for paging
         page = request.GET.get('page', 1)
