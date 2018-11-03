@@ -91,18 +91,21 @@ def add_account_user(request, history):
     invit_module = MethodModule()
     val = invit_module.filter_invitation_user(history)
 
-    # for paging
-    page = request.GET.get('page', 1)
-    paginator = Paginator(account_obj, 20)
+    if val != 0:
+        # for paging
+        page = request.GET.get('page', 1)
+        paginator = Paginator(val, 20)
 
-    try:
-        obj = paginator.page(page)
-    except PageNotAnInteger:
-        obj = paginator.page(1)
-    except EmptyPage:
-        obj = paginator.page(paginator.num_pages)
+        try:
+            obj = paginator.page(page)
+        except PageNotAnInteger:
+            obj = paginator.page(1)
+        except EmptyPage:
+            obj = paginator.page(paginator.num_pages)
+    else:
+        obj = val
 
-    return render(request, "addAccountUser.html", {'account': obj, 'user_list': val})
+    return render(request, "addAccountUser.html", {'account': account_obj, 'user_list': obj})
 
 
 @login_required
@@ -113,18 +116,20 @@ def account_user_list(request, history):
 
     length = len(get_obj)
     if length < 2:
+        obj = None
+    else:
         get_obj = False
 
-    # for paging
-    page = request.GET.get('page', 1)
-    paginator = Paginator(get_obj, 20)
+        # for paging
+        page = request.GET.get('page', 1)
+        paginator = Paginator(get_obj, 20)
 
-    try:
-        obj = paginator.page(page)
-    except PageNotAnInteger:
-        obj = paginator.page(1)
-    except EmptyPage:
-        obj = paginator.page(paginator.num_pages)
+        try:
+            obj = paginator.page(page)
+        except PageNotAnInteger:
+            obj = paginator.page(1)
+        except EmptyPage:
+            obj = paginator.page(paginator.num_pages)
 
     return render(request, 'party_list.html', {'user_list': obj, 'info': info_account})
 

@@ -40,12 +40,12 @@
     {% endif %}
 
     <!-- for paging fbv -->
-    {% if account.has_other_pages %}
+    {% if user_list.has_other_pages %}
         <nav aria-label="Account pagination" class="mb-4">
             <ul class="pagination">
-                {% if account.has_previous %}
+                {% if user_list.has_previous %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ account.previous_page_number }}">Previous</a>
+                        <a class="page-link" href="?page={{ user_list.previous_page_number }}">Previous</a>
                     </li>
                 {% else %}
                     <li class="page-item disabled">
@@ -53,8 +53,8 @@
                     </li>
                 {% endif %}
 
-                {% for page_num in account.paginator.page_range %}
-                    {% if account.number == page_num %}
+                {% for page_num in user_list.paginator.page_range %}
+                    {% if user_list.number == page_num %}
                         <li class="page-item active">
                             <span class="page-link">
                                 {{ page_num }}
@@ -68,9 +68,9 @@
                     {% endif %}
                     {% endfor %}
 
-                    {% if account.has_next %}
+                    {% if user_list.has_next %}
                         <li class="page-item">
-                            <a class="page-link" href="?page={{ account.next_page_number }}">Next</a>
+                            <a class="page-link" href="?page={{ user_list.next_page_number }}">Next</a>
                         </li>
                     {% else %}
                         <li class="page-item disabled">
