@@ -162,6 +162,7 @@ def history_main(request, history_pk):
     current_month = None
 
     paginator = None
+    user_list = None
     try:
         save = int()
         current_year = datetime.now().year
@@ -182,19 +183,18 @@ def history_main(request, history_pk):
             for money in this_month:
                 save += money.price
 
+            # for paging
+            page = request.GET.get('page', 1)
+            paginator = Paginator(history, 20)
+
+            user_list = paginator.page(page)
+
         elif len(history) == 0:
-            history = None
+            user_list = history
             save = 0
 
         history_name = AccountBooksName.objects.get(pk=history_pk)
 
-        # for paging
-        page = request.GET.get('page', 1)
-        paginator = Paginator(history, 20)
-
-        user_list =paginator.page(page)
-    except UseList.DoesNotExist:
-        raise Http404
     except PageNotAnInteger:
         user_list = paginator.page(1)
     except EmptyPage:
