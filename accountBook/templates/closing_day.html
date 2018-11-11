@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+
+<!--통화 및 시간표시 기능-->
+{% load humanize %}
+
+{% block stylesheet %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'home' %}"> Main </a></li>
+    <li class="breadcrumb-item"><a href="{% url 'history_main' name.pk %}">{{ name.account_name }} </a></li>
+    <li class="breadcrumb-item active"> 결산하기 </li>
+{% endblock %}
+
+{% block contents %}
+    <nav class="navbar navbar-light" style="background-color: #e3f2fd; margin-bottom: 10px;">
+        <h2>{{ month }} 월달 현재 누적금액</h2>
+            {% if history_name == 'k' %}
+        <h2>{{ sum|intcomma }}원</h2>
+            {% else %}
+        <h2>{{ sum|intcomma }}엔</h2>
+            {% endif %}
+    </nav>
+
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            {% for i in user_list %}
+                {% if i.user_id.username == user.username %}
+                    <a class="nav-item nav-link active" id="nav-home-tab_{{ i.user_id }}" data-toggle="tab" href="#nav-{{ i.user_id }}" role="tab" aria-controls="nav-{{ i.user_id }}" aria-selected="true">
+                        <input type="hidden" id="initial_id" value="{{ i.user_id }}">
+                        {{ i.user_id }}  {{ div|intcomma }}
+                        {% if history_name == 'k' %}
+                            원
+                        {% else %}
+                            엔
+                        {% endif %}
+                    </a>
+                {% else %}
+                    <a class="nav-item nav-link" id="nav-home-tab_{{ i.user_id }}" data-toggle="tab" href="#nav-{{ i.user_id }}" role="tab" aria-controls="nav-{{ i.user_id }}" aria-selected="false">
+                        {{ i.user_id|intcomma }}  {{ div|intcomma}}
+                        {% if history_name == 'k' %}
+                            원
+                        {% else %}
+                            엔
+                        {% endif %}
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+    </nav>
+
+    <div class="tab-content" id="nav-tabContent">
+        {% for i in user_list %}
+            {% if i.user_id.username == user.username %}
+                <div class="tab-pane fade show active" id="nav-{{ i.user_id }}" role="tabpanel" aria-labelledby="nav-home-tab">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="table-info">Use History</th>
+                                <th scope="col" class="table-info">Price</th>
+                                <th scope="col" class="table-info">Pay</th>
+                                <th scope="col" class="table-info">Writer</th>
+                                <th scope="col" class="table-info">Create at</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in history %}
+                                <tr>
+                                    <td scope="row">
+                                        <input type="checkbox" class="checkbox" onclick="get_price()" checked> {{ i.use_history }}
+                                    </td>
+                                    <td>
+                                        {{ i.price|intcomma }}
+                                    </td>
+                                    <td>
+                                        {{ i.val|intcomma }}
+                                        <input type="hidden" class="price" value="{{ i.val }}">
+                                    </td>
+                                    <td>
+                                        {{ i.user }}
+                                    </td>
+                                    <td>
+                                        {{ i.create_at|naturaltime }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="tab-pane fade" id="nav-{{ i.user_id }}" role="tabpanel" aria-labelledby="nav-profile-tab">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="table-info">Use History</th>
+                                <th scope="col" class="table-info">Price</th>
+                                <th scope="col" class="table-info">Pay</th>
+                                <th scope="col" class="table-info">Writer</th>
+                                <th scope="col" class="table-info">Create at</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in history %}
+                                <tr>
+                                    <td scope="row">
+                                        <input type="checkbox" class="checkbox" onclick="get_price()" checked> {{ i.use_history }}
+                                    </td>
+                                    <td>
+                                        {{ i.price|intcomma }}
+                                    </td>
+                                    <td>
+                                        {{ i.val|intcomma }}
+                                        <input type="hidden" class="price" value="{{ i.val }}">
+                                    </td>
+                                    <td>
+                                        {{ i.user }}
+                                    </td>
+                                    <td>
+                                        {{ i.create_at|naturaltime }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+<script>
+    var temp = "";
+    var separate = true;
+
+    function get_price() {
+
+        length = temp.length;
+
+        if (length == 0){
+            get_id = document.getElementById('initial_id').value;
+        } else {
+            get_id = temp;
+        }
+
+        make_id = "nav-" + get_id;
+        all_class = document.getElementById(make_id).querySelectorAll(".checkbox");
+
+        price_val = document.getElementById(make_id).querySelectorAll(".price");
+
+        var sum_plus = 0;
+        var sum_minus = 0;
+        var i;
+        for (i=0; i<all_class.length; i++) {
+            if (all_class[i].checked == true){
+                sum_plus += Number(price_val[i].value);
+            } else {
+                sum_minus += Number(price_val[i].value);
+            }
+        }
+        tab_tag = document.getElementsByClassName("nav-link");
+        var j;
+        for (j=0; j<tab_tag.length; j++) {
+            tag_id = tab_tag[j].id;
+            id_pos = tag_id.search("_");
+
+
+            var last_make_tab_name = ""
+            if (id_pos > 10){
+
+                tab_get_id = tag_id.slice(id_pos+1);
+
+                var tab_name = document.getElementById(tag_id).innerHTML;
+                var result = find_money(tab_name, tab_get_id)
+
+
+                if (get_id == tab_get_id ){
+                /*
+                    var re_slice = result.slice(20);
+                    var re_find = re_slice.search(get_id)
+                    result = find_money(re_slice, get_id)
+
+                    // module
+                    length = get_id.length
+                    var slice_money = result.slice(length+2)
+                    var money = get_number(slice_money);
+
+                    sum_plus += money
+
+                    var money_write = ""
+                    if (separate){
+                        money_write ="엔";
+                    } else {
+                        money_write ="원";
+                    }
+
+                    last_make_tab_name = get_id + "  " + sum_plus + " " + money_write;
+                 */
+
+                    result = find_money(tab_name, tab_get_id);
+                    result = extract_val(result);
+                    result = extract_money(result[1]);
+
+                    console.log(result + "  my view");
+
+                } else {
+                    result = find_money(tab_name, tab_get_id);
+                    result = extract_val(result);
+                    result = extract_money(result[1]);
+
+                    console.log(result);
+                }
+
+
+                separate_val = tab_name.search(">");
+
+                /*
+                if (separate_val == -1){
+                    result = find_money(tab_name, tab_get_id);
+                    result = extract_money(result);
+                    result = extract_val(result[1]);
+
+                    console.log(result);
+
+                    last_make_tab_name = get_id + "  " + sum_plus
+                }*/
+
+
+                //document.getElementById(tag_id).innerHTML= last_make_tab_name;
+            }
+
+        }
+
+    }
+
+    function extract_money(val){
+        remove_enter = val.split("\n");
+        remove_dot = remove_enter[0].split(",");
+        return Number(remove_dot[0]+remove_dot[1])
+    }
+
+    function extract_val(val){
+        var list = val.split("  ");
+        var val_list = [];
+        val_list[0] = list[0];
+        val_list[1] = list[1];
+
+        return val_list;
+    }
+
+    function find_money(name, id){
+        var jk = name.search(id)
+        var yen = name.search("엔")
+
+        var name_money = ""
+        if (yen > 0){
+            separate = true;
+            name_money = name.slice(jk, yen)
+        } else {
+            separate = false;
+            var won = name.search("원")
+            name_money = name.slice(jk, won)
+        }
+        return name_money;
+    }
+
+    $(document).ready(function(){
+        $(".nav-item").click(function(){
+            var id = $(this).attr('id');
+            var find = id.search("_");
+            var get_tab_name = id.slice(find+1)
+            temp = get_tab_name;
+        });
+    });
+
+</script>
+
+{% endblock %}

@@ -116,7 +116,7 @@ def account_user_list(request, history):
 
     length = len(get_obj)
     if length < 2:
-        obj = False
+        obj = get_obj
     else:
 
         # for paging
@@ -166,14 +166,15 @@ def history_main(request, history_pk):
     current_month = None
 
     paginator = None
-    user_list = None
+    use_list = None
     try:
         save = int()
-        current_year = datetime.now().year
         current_month = datetime.now().month
 
         history = UseList.objects.filter(book_name=history_pk).order_by('-create_at')
-        this_month = UseList.objects.filter(book_name=history_pk, create_at__year=current_year, create_at__month=current_month)
+
+        sum_obj = MethodModule()
+        save = sum_obj.get_sum(history_pk)
 
         if len(history) > 0:
             for i in history:
@@ -182,30 +183,71 @@ def history_main(request, history_pk):
                 my_val = int(price/divide)
                 i.val = my_val
 
-            # 이번달 총액수
-            save = 0
-            for money in this_month:
-                save += money.price
-
             # for paging
             page = request.GET.get('page', 1)
             paginator = Paginator(history, 20)
 
-            user_list = paginator.page(page)
+            use_list = paginator.page(page)
 
         elif len(history) == 0:
-            user_list = history
+            use_list = history
             save = 0
 
         history_name = AccountBooksName.objects.get(pk=history_pk)
 
     except PageNotAnInteger:
-        user_list = paginator.page(1)
+        use_list = paginator.page(1)
     except EmptyPage:
-        user_list = paginator.page(paginator.num_pages)
+        use_list = paginator.page(paginator.num_pages)
 
-    return render(request, 'history_main.html', {'history': user_list, 'name': history_name, 'sum': save, 'month': current_month})
+    return render(request, 'history_main.html', {'history': use_list, 'name': history_name, 'sum': save, 'month': current_month})
 
+
+@login_required
+def closing_day(request, history_pk, month):
+
+    # pre-depth
+    history_name = AccountBooksName.objects.get(pk=history_pk)
+
+    # sum all use list
+    sum_obj = MethodModule()
+    sum = sum_obj.get_sum(history_pk)
+
+    # get user
+    user_list = PartyBelongTo.objects.filter(account_id=history_pk)
+
+    # division
+    div = sum/len(user_list)
+
+    # get all use and paging
+    paginator = None
+    use_list = None
+    try:
+
+        # all use list
+        history = UseList.objects.filter(book_name=history_pk).order_by('-create_at')
+        if len(history) > 0:
+            for i in history:
+                price = i.price
+                divide = i.division
+                my_val = int(price/divide)
+                i.val = my_val
+
+            # for paging
+            page = request.GET.get('page', 1)
+            paginator = Paginator(history, 20)
+
+            use_list = paginator.page(page)
+
+        elif len(history) == 0:
+            use_list = history
+
+    except PageNotAnInteger:
+        use_list = paginator.page(1)
+    except EmptyPage:
+        use_list = paginator.page(paginator.num_pages)
+
+    return render(request, 'closing_day.html', {'name': history_name, 'user_list': user_list, 'sum': sum, 'month': month, 'div': int(div), 'history': use_list})
 
 # @login_required
 # def main_view(request):
@@ -288,3 +330,17 @@ class MethodModule:
             val = show_user
 
         return val
+
+    @staticmethod
+    def get_sum(history_pk):
+
+        get_sum = int()
+        current_year = datetime.now().year
+        current_month = datetime.now().month
+
+        this_month = UseList.objects.filter(book_name=history_pk, create_at__year=current_year,
+                                            create_at__month=current_month)
+        for money in this_month:
+            get_sum += money.price
+
+        return get_sum

@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block contents %}
-    {% if history is None %}
+    {% if not history %}
         <p>등록된 사용내역이 없습니다.</p>
         <a type="button" href="{% url 'write_history' name.pk %}" class="btn btn-success">사용내역 등록하기</a>
         <a type="button" href="{% url 'accountListUser' name.pk %}" class="btn btn btn-outline-primary" >사용자 리스트 보기</a>
@@ -27,6 +27,7 @@
 
         <a type="button" href="{% url 'write_history' name.pk %}" class="btn btn-success" style="margin-bottom:5px;">사용내역 등록하기</a>
         <a type="button" href="{% url 'accountListUser' name.pk %}" class="btn btn btn-outline-primary" style="margin-bottom:5px; float:right" >사용자 리스트 보기</a>
+        <a type="button" href="{% url 'closing_day' name.pk month %}" class="btn btn-info" style="margin-bottom:5px;float:">결산하기</a>
 
         <table class="table table-striped">
             <thead>
@@ -37,7 +38,6 @@
                     <th scope="col" class="table-info">Writer</th>
                     <th scope="col" class="table-info">Division</th>
                     <th scope="col" class="table-info">Create at</th>
-
                 </tr>
             </thead>
             <tbody>
