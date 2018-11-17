@@ -175,62 +175,55 @@
 
 
                 if (get_id == tab_get_id ){
-                /*
-                    var re_slice = result.slice(20);
-                    var re_find = re_slice.search(get_id)
-                    result = find_money(re_slice, get_id)
-
-                    // module
-                    length = get_id.length
-                    var slice_money = result.slice(length+2)
-                    var money = get_number(slice_money);
-
-                    sum_plus += money
-
-                    var money_write = ""
-                    if (separate){
-                        money_write ="엔";
-                    } else {
-                        money_write ="원";
-                    }
-
-                    last_make_tab_name = get_id + "  " + sum_plus + " " + money_write;
-                 */
 
                     result = find_money(tab_name, tab_get_id);
                     result = extract_val(result);
                     result = extract_money(result[1]);
 
-                    console.log(result + "  my view");
+                    if (!result) {
+
+                        result = my_tab(tab_name, tab_get_id);
+                        result = find_money(result, tab_get_id);
+                        result = extract_val(result);
+                        result = extract_money(result[1]);
+
+                        console.log(result + "  " + " my enter")
+
+                    } else {
+                        console.log(result + " my view");
+                    }
+
 
                 } else {
                     result = find_money(tab_name, tab_get_id);
                     result = extract_val(result);
                     result = extract_money(result[1]);
 
-                    console.log(result);
+                    if (!result) {
+
+                        result = my_tab(tab_name, tab_get_id);
+                        result = find_money(result, tab_get_id);
+                        result = extract_val(result);
+                        result = extract_money(result[1]);
+
+                        console.log(result + "  " + " present tab")
+
+                    } else {
+                        console.log(result + " other view");
+                    }
+
                 }
-
-
-                separate_val = tab_name.search(">");
-
-                /*
-                if (separate_val == -1){
-                    result = find_money(tab_name, tab_get_id);
-                    result = extract_money(result);
-                    result = extract_val(result[1]);
-
-                    console.log(result);
-
-                    last_make_tab_name = get_id + "  " + sum_plus
-                }*/
-
 
                 //document.getElementById(tag_id).innerHTML= last_make_tab_name;
             }
 
         }
 
+    }
+
+    function my_tab(html, my_id){
+        var nm = html.slice(103);
+        return nm;
     }
 
     function extract_money(val){
