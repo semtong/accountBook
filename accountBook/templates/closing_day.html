@@ -28,7 +28,7 @@
             {% for i in user_list %}
                 {% if i.user_id.username == user.username %}
                     <a class="nav-item nav-link active" id="nav-home-tab_{{ i.user_id }}" data-toggle="tab" href="#nav-{{ i.user_id }}" role="tab" aria-controls="nav-{{ i.user_id }}" aria-selected="true">
-                        <input type="hidden" id="initial_id" value="{{ i.user_id }}">
+                        <input type="hidden" id="initial_id" value="{{i.user_id}}">
                         {{ i.user_id }}  {{ div|intcomma }}
                         {% if history_name == 'k' %}
                             원
@@ -69,14 +69,13 @@
                             {% for i in history %}
                                 <tr>
                                     <td scope="row">
-                                        <input type="checkbox" class="checkbox" onclick="get_price()" checked> {{ i.use_history }}
+                                        <input type="checkbox" class="checkbox" onclick="get_price({{ i.val }})" checked> {{ i.use_history }}
                                     </td>
                                     <td>
                                         {{ i.price|intcomma }}
                                     </td>
                                     <td>
                                         {{ i.val|intcomma }}
-                                        <input type="hidden" class="price" value="{{ i.val }}">
                                     </td>
                                     <td>
                                         {{ i.user }}
@@ -105,14 +104,13 @@
                             {% for i in history %}
                                 <tr>
                                     <td scope="row">
-                                        <input type="checkbox" class="checkbox" onclick="get_price()" checked> {{ i.use_history }}
+                                        <input type="checkbox" class="checkbox" onclick="get_price({{ i.val }})" checked> {{ i.use_history }}
                                     </td>
                                     <td>
                                         {{ i.price|intcomma }}
                                     </td>
                                     <td>
                                         {{ i.val|intcomma }}
-                                        <input type="hidden" class="price" value="{{ i.val }}">
                                     </td>
                                     <td>
                                         {{ i.user }}
@@ -130,139 +128,120 @@
     </div>
 
 <script>
-    var temp = "";
-    var separate = true;
+    var present_tab = "";
+    var tab_full_name = "";
+    var money_flag = "";
+    var tab_id = "";
+    var my_id = document.getElementById("initial_id").value;
+    var complete_tab = "";
+    var con_id = "nav-home-tab_"
 
-    function get_price() {
+    function get_price(money){
+        var checked_flag = $(".checkbox").prop('checked');
 
-        length = temp.length;
+        var tab_len = present_tab.length;
 
-        if (length == 0){
-            get_id = document.getElementById('initial_id').value;
+        if (tab_len == 0 ){
+            tab_name_f = $(".nav-tabs .active").text();
+            flag_money(tab_name_f);
+            tab_full_name = origin_tab(tab_name_f, 0);
         } else {
-            get_id = temp;
+            tab_name_f = present_tab;
+            tab_full_name = origin_tab(tab_name_f, 1);
         }
 
-        make_id = "nav-" + get_id;
-        all_class = document.getElementById(make_id).querySelectorAll(".checkbox");
+        var id_money = tab_user_id_money(tab_full_name);
+        tab_id = id_money[0];
+        var remove_comma = rm_comma(id_money[1])
 
-        price_val = document.getElementById(make_id).querySelectorAll(".price");
-
-        var sum_plus = 0;
-        var sum_minus = 0;
-        var i;
-        for (i=0; i<all_class.length; i++) {
-            if (all_class[i].checked == true){
-                sum_plus += Number(price_val[i].value);
-            } else {
-                sum_minus += Number(price_val[i].value);
-            }
-        }
-        tab_tag = document.getElementsByClassName("nav-link");
+        var tab_tag = document.getElementsByClassName("nav-link");
         var j;
-        for (j=0; j<tab_tag.length; j++) {
-            tag_id = tab_tag[j].id;
-            id_pos = tag_id.search("_");
 
+        for (j=1; j<tab_tag.length; j++) {
+            var user_id_val = tab_tag[j].id;
+            if (user_id_val !=  con_id + tab_id){
+                var login_id = con_id + my_id;
+                var tab_origin = document.getElementById(user_id_val).text;
+                var temp_name = "";
 
-            var last_make_tab_name = ""
-            if (id_pos > 10){
-
-                tab_get_id = tag_id.slice(id_pos+1);
-
-                var tab_name = document.getElementById(tag_id).innerHTML;
-                var result = find_money(tab_name, tab_get_id)
-
-
-                if (get_id == tab_get_id ){
-
-                    result = find_money(tab_name, tab_get_id);
-                    result = extract_val(result);
-                    result = extract_money(result[1]);
-
-                    if (!result) {
-
-                        result = my_tab(tab_name, tab_get_id);
-                        result = find_money(result, tab_get_id);
-                        result = extract_val(result);
-                        result = extract_money(result[1]);
-
-                        console.log(result + "  " + " my enter")
-
-                    } else {
-                        console.log(result + " my view");
-                    }
-
-
+                if (user_id_val == login_id) {
+                    temp_name = origin_tab(tab_origin, 0);
                 } else {
-                    result = find_money(tab_name, tab_get_id);
-                    result = extract_val(result);
-                    result = extract_money(result[1]);
-
-                    if (!result) {
-
-                        result = my_tab(tab_name, tab_get_id);
-                        result = find_money(result, tab_get_id);
-                        result = extract_val(result);
-                        result = extract_money(result[1]);
-
-                        console.log(result + "  " + " present tab")
-
-                    } else {
-                        console.log(result + " other view");
-                    }
-
+                    temp_name = origin_tab(tab_origin, 1);
                 }
 
-                //document.getElementById(tag_id).innerHTML= last_make_tab_name;
+                var id_money_1 = tab_user_id_money(temp_name);
+                var tab_id_1 = id_money_1[0];
+                var remove_comma_1 = rm_comma(id_money_1[1])
+
+                if (checked_flag == true){
+                    adj = Number(remove_comma_1) + Number(money);
+                } else {
+                    adj = Number(remove_comma_1) - Number(money);
+                }
+                var insert_comma = adj.toLocaleString();
+
+                complete_tab = tab_id_1 + " " + insert_comma + " " + money_flag;
+                document.getElementById(user_id_val).text = complete_tab;
             }
-
         }
-
-    }
-
-    function my_tab(html, my_id){
-        var nm = html.slice(103);
-        return nm;
-    }
-
-    function extract_money(val){
-        remove_enter = val.split("\n");
-        remove_dot = remove_enter[0].split(",");
-        return Number(remove_dot[0]+remove_dot[1])
-    }
-
-    function extract_val(val){
-        var list = val.split("  ");
-        var val_list = [];
-        val_list[0] = list[0];
-        val_list[1] = list[1];
-
-        return val_list;
-    }
-
-    function find_money(name, id){
-        var jk = name.search(id)
-        var yen = name.search("엔")
-
-        var name_money = ""
-        if (yen > 0){
-            separate = true;
-            name_money = name.slice(jk, yen)
+        if (checked_flag == true){
+            adj = Number(remove_comma) - Number(money);
         } else {
-            separate = false;
-            var won = name.search("원")
-            name_money = name.slice(jk, won)
+            adj = Number(remove_comma) + Number(money);
         }
-        return name_money;
+        var insert_comma = adj.toLocaleString();
+        complete_tab = tab_id + " " + insert_comma + " " + money_flag;
+
+        var temp = con_id + tab_id;
+
+        document.getElementById(temp).text = complete_tab;
+
+    }
+
+    function rm_comma(val) {
+        while(val.search(",") >=0){
+            val = (val + "").replace(",","")
+        }
+        return val;
+    }
+
+    function tab_user_id_money(val){
+        var num = val.search(" ");
+        var id = val.slice(0, num);
+        var money = val.slice(num+2);
+
+        return [id, money]
+    }
+
+    function flag_money(val){
+        var money_k = val.search("엔");
+        if (money_k > 0){
+            money_flag = "엔";
+        } else {
+            money_flag = "원";
+        }
+    }
+
+    function origin_tab(val, flag) {
+        var first_slice = val;
+
+        if (flag == 0){
+            first_slice = first_slice.slice(50);
+        } else {
+            first_slice = first_slice.slice(25);
+        }
+
+        var find_enter = first_slice.search(/\r|\n/);
+        var math = first_slice.slice(0, find_enter);
+
+        return math;
     }
 
     $(document).ready(function(){
         $(".nav-item").click(function(){
-            var id = $(this).attr('id');
-            var find = id.search("_");
-            var get_tab_name = id.slice(find+1)
-            temp = get_tab_name;
+            var id = $(this).text();
+            present_tab = id;
         });
     });
 
