@@ -15,7 +15,7 @@
 
 {% block contents %}
     <nav class="navbar navbar-light" style="background-color: #e3f2fd; margin-bottom: 10px;">
-        <h2>{{ month }} 월달 현재 누적금액</h2>
+        <h2>{{ year }} 년 {{ month }} 월달 현재 누적금액</h2>
             {% if history_name == 'k' %}
         <h2>{{ sum|intcomma }}원</h2>
             {% else %}
@@ -69,7 +69,7 @@
                             {% for i in history %}
                                 <tr>
                                     <td scope="row">
-                                        <input type="checkbox" class="checkbox" onclick="get_price({{ i.val }})" checked> {{ i.use_history }}
+                                        <input type="checkbox" class="checkbox" value="{{i.pk}}" onclick="get_price({{i.val}})" checked> {{ i.use_history }}
                                     </td>
                                     <td>
                                         {{ i.price|intcomma }}
@@ -104,7 +104,7 @@
                             {% for i in history %}
                                 <tr>
                                     <td scope="row">
-                                        <input type="checkbox" class="checkbox" onclick="get_price({{ i.val }})" checked> {{ i.use_history }}
+                                        <input type="checkbox" class="checkbox" value="{{i.pk}}" onclick="get_price({{i.val}})" checked> {{ i.use_history }}
                                     </td>
                                     <td>
                                         {{ i.price|intcomma }}
@@ -143,12 +143,13 @@
 
         if (tab_len == 0 ){
             tab_name_f = $(".nav-tabs .active").text();
-            flag_money(tab_name_f);
             tab_full_name = origin_tab(tab_name_f, 0);
         } else {
             tab_name_f = present_tab;
             tab_full_name = origin_tab(tab_name_f, 1);
         }
+
+        flag_money(tab_name_f);
 
         var id_money = tab_user_id_money(tab_full_name);
         tab_id = id_money[0];
@@ -156,6 +157,7 @@
 
         var tab_tag = document.getElementsByClassName("nav-link");
         var j;
+
 
         for (j=1; j<tab_tag.length; j++) {
             var user_id_val = tab_tag[j].id;
@@ -211,6 +213,11 @@
         var id = val.slice(0, num);
         var money = val.slice(num+2);
 
+        var flag = money.search(money_flag);
+
+        if ( flag > 0 ) {
+            money = money.slice(0, flag-1);
+        }
         return [id, money]
     }
 
@@ -225,16 +232,20 @@
 
     function origin_tab(val, flag) {
         var first_slice = val;
+        var order_flag = val.search(" ");
+        if (order_flag == 1) {
+            if (flag == 0){
+                first_slice = first_slice.slice(50);
+            } else {
+                first_slice = first_slice.slice(25);
+            }
 
-        if (flag == 0){
-            first_slice = first_slice.slice(50);
+            var find_enter = first_slice.search(/\r|\n/);
+            var math = first_slice.slice(0, find_enter);
+
         } else {
-            first_slice = first_slice.slice(25);
+            var math = first_slice;
         }
-
-        var find_enter = first_slice.search(/\r|\n/);
-        var math = first_slice.slice(0, find_enter);
-
         return math;
     }
 

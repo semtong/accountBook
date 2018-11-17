@@ -163,15 +163,18 @@ def history_main(request, history_pk):
 
     history_name = None
     save = None
+    current_year = None
     current_month = None
 
     paginator = None
     use_list = None
     try:
         save = int()
+        current_year = datetime.now().year
         current_month = datetime.now().month
 
-        history = UseList.objects.filter(book_name=history_pk).order_by('-create_at')
+        history = UseList.objects.filter(book_name=history_pk, create_at__year=current_year,
+                                         create_at__month=current_month).order_by('-create_at')
 
         sum_obj = MethodModule()
         save = sum_obj.get_sum(history_pk)
@@ -200,11 +203,11 @@ def history_main(request, history_pk):
     except EmptyPage:
         use_list = paginator.page(paginator.num_pages)
 
-    return render(request, 'history_main.html', {'history': use_list, 'name': history_name, 'sum': save, 'month': current_month})
+    return render(request, 'history_main.html', {'history': use_list, 'name': history_name, 'sum': save, 'year': current_year , 'month': current_month})
 
 
 @login_required
-def closing_day(request, history_pk, month):
+def closing_day(request, history_pk, year, month):
 
     # pre-depth
     history_name = AccountBooksName.objects.get(pk=history_pk)
@@ -225,7 +228,8 @@ def closing_day(request, history_pk, month):
     try:
 
         # all use list
-        history = UseList.objects.filter(book_name=history_pk).order_by('-create_at')
+        history = UseList.objects.filter(book_name=history_pk, create_at__year=year,
+                                         create_at__month=month).order_by('-create_at')
         if len(history) > 0:
             for i in history:
                 price = i.price
@@ -247,7 +251,7 @@ def closing_day(request, history_pk, month):
     except EmptyPage:
         use_list = paginator.page(paginator.num_pages)
 
-    return render(request, 'closing_day.html', {'name': history_name, 'user_list': user_list, 'sum': sum, 'month': month, 'div': int(div), 'history': use_list})
+    return render(request, 'closing_day.html', {'name': history_name, 'user_list': user_list, 'sum': sum, 'year': year, 'month': month, 'div': int(div), 'history': use_list})
 
 # @login_required
 # def main_view(request):

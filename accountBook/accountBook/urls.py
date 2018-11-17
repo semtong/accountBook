@@ -61,7 +61,7 @@ urlpatterns = [
     path('write_history/<int:history_pk>/', views.write_history, name='write_history'),
 
     # closing day
-    path('closing_day/<int:history_pk>/<int:month>', views.closing_day, name='closing_day'),
+    path('closing_day/<int:history_pk>/<int:year>/<int:month>', views.closing_day, name='closing_day'),
 
     path('history_main/<int:history_pk>/', views.history_main, name='history_main'),
 
