@@ -203,7 +203,8 @@ def history_main(request, history_pk):
     except EmptyPage:
         use_list = paginator.page(paginator.num_pages)
 
-    return render(request, 'history_main.html', {'history': use_list, 'name': history_name, 'sum': save, 'year': current_year , 'month': current_month})
+    return render(request, 'history_main.html', {'history': use_list, 'name': history_name, 'sum': save,
+                                                 'year': current_year, 'month': current_month})
 
 
 @login_required
