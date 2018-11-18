@@ -27,14 +27,14 @@
         <thead>
             <tr>
                 {% for i in user_list %}
-                    <th scope="col" class="table-dark">{{ i.user_id.username }}</th>
+                    <th scope="col" class="table-dark member" id="{{ i.user_id.username }}" >{{ i.user_id.username }}</th>
                 {% endfor %}
             </tr>
         </thead>
         <tbody>
             <tr>
                 {% for i in user_list %}
-                    <td class="table-light">
+                    <td class="table-light money" id="sum_{{ i.user_id.username }}">
                         {{ div|intcomma }}
                         {% if history_name == 'k' %}
                             원
@@ -52,7 +52,6 @@
             {% for i in user_list %}
                 {% if i.user_id.username == user.username %}
                     <a class="nav-item nav-link active" id="nav-home-tab_{{ i.user_id }}" data-toggle="tab" href="#nav-{{ i.user_id }}" role="tab" aria-controls="nav-{{ i.user_id }}" aria-selected="true">
-                        <input type="hidden" id="initial_id" value="{{i.user_id}}">
                         {{ i.user_id }}
                     </a>
                 {% else %}
@@ -83,7 +82,7 @@
                             {% for i in history %}
                                 <tr>
                                     <td scope="row">
-                                        <input type="checkbox" class="checkbox" value="{{i.pk}}" onclick="get_price({{i.val}})" checked> {{ i.use_history }}
+                                        <input type="checkbox" class="checkbox" value="{{i.pk}}" checked> {{ i.use_history }}
                                     </td>
                                     <td>
                                         {{ i.price|intcomma }}
@@ -142,6 +141,178 @@
     </div>
 
 <script>
+    var div_list = [];
+    var flag_money = "";
+
+    var present_tab = "";
+    var minus_list = [];
+    var user_id = "";
+
+    $(document).ready(function(){
+        member_arr = document.getElementsByClassName("member");
+        for (i=0; i<member_arr.length; i++){
+            var id = member_arr[i].id;
+            var sum = document.getElementById("sum_"+ id).innerHTML;
+            var temp = rm_sum(sum);
+            temp = ex_sum(temp);
+            var t_temp = {
+                id : id,
+                div : Number(temp)
+            }
+            div_list.push(t_temp);
+           /* console.log(div_list);*/
+        }
+
+
+        $(".nav-item").click(function(){
+            var id = $(this).text();
+            present_tab = id;
+        });
+
+        $(".checkbox").click(function(){
+            var ch_val = $(this).prop("checked");
+            var pk = $(this).val();
+            var div_sum = $(this).parent().next().next().text();
+            var temp_len = present_tab.length;
+
+            rm_sum_i = rm_sum(div_sum);
+            ex_sum_div = rm_comma(rm_sum_i);
+
+            if (temp_len == 0){
+                present_tab = $("#userMenu").text();
+            }
+
+            user_id = rm_blank(present_tab);
+
+
+            /* pop or delete minus array */
+            if (ch_val == false) {
+
+                var length = minus_list.length;
+                var user_len = div_list.length;
+                if (length == 0){
+
+                    var div_people = 0;
+                    var i = 0
+                    while (i < user_len){
+                        if (div_list[i].id == user_id){
+                            div_list[i].div = div_list[i].div - Number(ex_sum_div);
+                            add_comma = div_list[i].div.toLocaleString();
+                            complete = add_comma + " " + flag_money;
+                            make_target = "sum_" + div_list[i].id;
+
+                            document.getElementById(make_target).innerHTML = complete
+                        } else {
+                            div_people = div_people + 1;
+                        }
+
+                        i++ ;
+                    }
+                    var i = 0;
+                    while ( i< user_len) {
+
+                        if (div_list[i].id != user_id){
+                            result = Number(ex_sum_div) / Number(div_people);
+                            result_1 = Math.floor(result/10) * 10;
+                            div_list[i].div = div_list[i].div + result_1;
+                            add_comma = div_list[i].div.toLocaleString();
+
+                            complete = add_comma + " " + flag_money;
+                            make_target = "sum_" + div_list[i].id;
+
+                            document.getElementById(make_target).innerHTML = complete
+                        }
+
+                        i++ ;
+                    }
+
+                } else {
+
+                    var except = 0;
+                    var div_people = 0
+                    var i = 0;
+                    while (i < length){
+                        var tab = minus_list[i].tab;
+                        var use_pk = minus_list[i].use_pk
+
+
+                        if ( tab != user_id && use_pk != pk ) {
+                            div_people =+ 1;
+                        } else if ( tab != user_id && use_pk == pk ) {
+                            div_people =- 1;
+                            except =+ Number(ex_sum_div);
+                        }
+
+                        i ++;
+
+                    }
+
+
+
+                }
+
+                var obj = {
+                    tab : user_id,
+                    use_pk : pk
+                }
+                minus_list.push(obj);
+            } else {
+                var i = 0;
+                for (i=0; i<minus_list.length; i++){
+                    k = minus_list[i].tab;
+                    j = minus_list[i].use_pk;
+                    if (j == pk && k == user_id ) {
+                        delete minus_list[i];
+                    }
+                }
+            }
+
+        });
+
+    });
+
+    function rm_sum(val){
+        var temp = val;
+        while (temp.search(" ") > 0 ){
+            temp = (temp + "").replace(" ","")
+        }
+        temp = temp.replace(/\r|\n/, "");
+        temp = temp.replace(/\r|\n/, "");
+        temp = temp.replace(/\r|\n/, "");
+
+        return temp;
+    }
+
+    function ex_sum(val){
+        var j = val.search("엔");
+        flag_money = "엔";
+
+        if (j == -1){
+            j = val.search("원");
+            flag_money = "원";
+        }
+        var temp = val.slice(0, j);
+
+        temp = rm_comma(temp);
+        return temp;
+    }
+
+    function rm_comma(val){
+        while(val.search(",") >=0){
+            val = (val + "").replace(",","")
+        }
+        return val;
+    }
+
+    function rm_blank(val){
+        var temp = val;
+        while (temp.search(" ") > 0 ){
+            temp = (temp + "").replace(" ","")
+        }
+        temp = temp.replace(/\r|\n/, "");
+        temp = temp.replace(/\r|\n/, "");
+        return temp;
+    }
 
 
 </script>
