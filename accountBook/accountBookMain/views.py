@@ -206,52 +206,52 @@ def history_main(request, history_pk):
     return render(request, 'history_main.html', {'history': use_list, 'name': history_name, 'sum': save, 'year': current_year , 'month': current_month})
 
 
-# @login_required
-# def closing_day(request, history_pk, year, month):
-#
-#     # pre-depth
-#     history_name = AccountBooksName.objects.get(pk=history_pk)
-# 
-#     # sum all use list
-#     sum_obj = MethodModule()
-#     sum = sum_obj.get_sum(history_pk)
-#
-#     # get user
-#     user_list = PartyBelongTo.objects.filter(account_id=history_pk)
-#
-#     # division
-#     div = sum/len(user_list)
-#
-#     # get all use and paging
-#     paginator = None
-#     use_list = None
-#     try:
-#
-#         # all use list
-#         history = UseList.objects.filter(book_name=history_pk, create_at__year=year,
-#                                          create_at__month=month).order_by('-create_at')
-#         if len(history) > 0:
-#             for i in history:
-#                 price = i.price
-#                 divide = i.division
-#                 my_val = int(price/divide)
-#                 i.val = my_val
-#
-#             # for paging
-#             page = request.GET.get('page', 1)
-#             paginator = Paginator(history, 20)
-#
-#             use_list = paginator.page(page)
-#
-#         elif len(history) == 0:
-#             use_list = history
-#
-#     except PageNotAnInteger:
-#         use_list = paginator.page(1)
-#     except EmptyPage:
-#         use_list = paginator.page(paginator.num_pages)
-#
-#     return render(request, 'closing_day.html', {'name': history_name, 'user_list': user_list, 'sum': sum, 'year': year, 'month': month, 'div': int(div), 'history': use_list})
+@login_required
+def closing_day(request, history_pk, year, month):
+
+    # pre-depth
+    history_name = AccountBooksName.objects.get(pk=history_pk)
+
+    # sum all use list
+    sum_obj = MethodModule()
+    sum = sum_obj.get_sum(history_pk)
+
+    # get user
+    user_list = PartyBelongTo.objects.filter(account_id=history_pk)
+
+    # division
+    div = sum/len(user_list)
+
+    # get all use and paging
+    paginator = None
+    use_list = None
+    try:
+
+        # all use list
+        history = UseList.objects.filter(book_name=history_pk, create_at__year=year,
+                                         create_at__month=month).order_by('-create_at')
+        if len(history) > 0:
+            for i in history:
+                price = i.price
+                divide = i.division
+                my_val = int(price/divide)
+                i.val = my_val
+
+            # for paging
+            page = request.GET.get('page', 1)
+            paginator = Paginator(history, 20)
+
+            use_list = paginator.page(page)
+
+        elif len(history) == 0:
+            use_list = history
+
+    except PageNotAnInteger:
+        use_list = paginator.page(1)
+    except EmptyPage:
+        use_list = paginator.page(paginator.num_pages)
+
+    return render(request, 'closing_day.html', {'name': history_name, 'user_list': user_list, 'sum': sum, 'year': year, 'month': month, 'div': int(div), 'history': use_list})
 
 # @login_required
 # def main_view(request):
