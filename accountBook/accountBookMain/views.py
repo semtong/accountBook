@@ -252,7 +252,8 @@ def closing_day(request, history_pk, year, month):
     except EmptyPage:
         use_list = paginator.page(paginator.num_pages)
 
-    return render(request, 'closing_day.html', {'name': history_name, 'user_list': user_list, 'sum': sum, 'year': year, 'month': month, 'div': int(div), 'history': use_list})
+    return render(request, 'closing_day.html', {'name': history_name, 'user_list': user_list, 'sum': sum, 'year': year,
+                                                'month': month, 'div': int(div), 'history': use_list})
 
 # @login_required
 # def main_view(request):
