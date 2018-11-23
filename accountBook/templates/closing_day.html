@@ -214,7 +214,15 @@
                         if (div_list[i].id != user_id){
                             result = Number(ex_sum_div) / Number(div_people);
                             result_1 = Math.floor(result/10) * 10;
-                            div_list[i].div = div_list[i].div + result_1;
+                            /* '원' 단위절삭 */
+                            if (flag_money == "원"){
+                                div_list[i].div = div_list[i].div + result_1;
+                            } else {
+                                result_2 = Math.round(result)
+                                /* 소수점 단위 절삭 */
+                                var round = div_list[i].div + result_2;
+                                div_list[i].div = Math.round(round);
+                            }
                             add_comma = div_list[i].div.toLocaleString();
 
                             complete = add_comma + " " + flag_money;
@@ -260,7 +268,18 @@
 
                             result = Number(ex_sum_div) / Number(div_people);
                             result_1 = Math.floor(result/10) * 10;
-                            div_list[i].div = div_list[i].div + result_1;
+
+                            /* '원' 단위절삭 */
+                            if (flag_money == "원"){
+                                div_list[i].div = div_list[i].div + result_1;
+
+                            } else {
+                                result_2 = Math.round(result)
+                                /* 소수점 단위 절삭 */
+                                var round = div_list[i].div + result_2;
+                                div_list[i].div = Math.round(round);
+                            }
+
                             add_comma = div_list[i].div.toLocaleString();
 
                             complete = add_comma + " " + flag_money;
@@ -274,7 +293,6 @@
                                 t_pk = minus_list[j].use_pk;
                                 if (t_id == div_list[i].id && t_pk == pk){
                                     pass_flag = true;
-                                    console.log(pass_flag);
                                     break;
                                 }
 
@@ -298,13 +316,44 @@
                 minus_list.push(obj);
             } else {
                 var i = 0;
+
+                var temp_arr = [];
+                var extract_obj = {}
                 for (i=0; i<minus_list.length; i++){
                     k = minus_list[i].tab;
                     j = minus_list[i].use_pk;
                     if (j == pk && k == user_id ) {
-                        delete minus_list[i];
+                        extract_obj = {tab: k, use_pk: j }
+                    } else {
+                        var temp_obj = {tab: k, use_pk: j};
+                        temp_arr.push(temp_obj)
                     }
                 }
+
+                minus_list = temp_arr;
+                div_len = div_list.length;
+
+                var m = 0;
+
+                while (m < div_len){
+                    if ( div_list[m].id ==  extract_obj.tab){
+                        div_list[m].div = div_list[m].div + Number(ex_sum_div);
+                    } else {
+                        var temp_r = ex_sum_div / ( div_len - 1 );
+                        var temp_j = Math.round(temp_r);
+                        div_list[m].div = div_list[m].div - temp_j;
+                    }
+
+                    add_comma = div_list[m].div.toLocaleString();
+
+                    complete = add_comma + " " + flag_money;
+                    make_target = "sum_" + div_list[m].id;
+
+                    document.getElementById(make_target).innerHTML = complete;
+
+                    m++;
+                }
+
             }
 
         });
