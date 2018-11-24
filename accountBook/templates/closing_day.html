@@ -218,9 +218,8 @@
                             if (flag_money == "원"){
                                 div_list[i].div = div_list[i].div + result_1;
                             } else {
-                                result_2 = Math.round(result)
                                 /* 소수점 단위 절삭 */
-                                var round = div_list[i].div + result_2;
+                                var round = div_list[i].div + result;
                                 div_list[i].div = Math.round(round);
                             }
                             add_comma = div_list[i].div.toLocaleString();
@@ -258,6 +257,21 @@
                     i = 0
                     while ( i < user_len ){
                         if (div_list[i].id == user_id){
+
+                            var n = 0;
+                            var div_plus = 0;
+                            while(n < length){
+                                var m_pk = minus_list[n].use_pk;
+                                if (m_pk == pk){
+                                    div_plus =+ 1;
+                                }
+                                n++;
+                            }
+                            if(div_plus != 0){
+                                div_plus = user_len - Number(div_plus);
+                                add_other = div_sum / div_plus;
+                                ex_sum_div = Number(ex_sum_div) + Number(add_other);
+                            }
                             div_list[i].div = div_list[i].div - Number(ex_sum_div);
                             add_comma = div_list[i].div.toLocaleString();
                             complete = add_comma + " " + flag_money;
@@ -265,19 +279,17 @@
 
                             document.getElementById(make_target).innerHTML = complete
                         } else {
-
                             result = Number(ex_sum_div) / Number(div_people);
-                            result_1 = Math.floor(result/10) * 10;
-
                             /* '원' 단위절삭 */
+                            var result_2 = 0;
                             if (flag_money == "원"){
+                                result_1 = Math.floor(result/10) * 10;
                                 div_list[i].div = div_list[i].div + result_1;
-
                             } else {
                                 result_2 = Math.round(result)
                                 /* 소수점 단위 절삭 */
-                                var round = div_list[i].div + result_2;
-                                div_list[i].div = Math.round(round);
+                                rd = div_list[i].div + result_2;
+                                div_list[i].div = Math.round(rd);
                             }
 
                             add_comma = div_list[i].div.toLocaleString();
@@ -293,6 +305,7 @@
                                 t_pk = minus_list[j].use_pk;
                                 if (t_id == div_list[i].id && t_pk == pk){
                                     pass_flag = true;
+                                    div_list[i].div = div_list[i].div - result_2;
                                     break;
                                 }
 
@@ -306,7 +319,7 @@
                         i++;
 
                     }
-
+                    console.log( div_list)
                 }
 
                 var obj = {

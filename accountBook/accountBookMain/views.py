@@ -1,8 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 # Create your views here.
 
-from django.http import Http404
-from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import *
@@ -146,6 +144,7 @@ def write_history(request, history_pk):
             regi = form.save(commit=False)
             regi.book_name = AccountBooksName.objects.get(account_id=history_pk)
             regi.user = request.user
+            regi.division = people
             regi.num = people
             regi.create_at = timezone.now()
             regi.save()
