@@ -1,5 +1,6 @@
 from django import forms
 from .models import *
+from django.contrib.auth.models import User
 
 MONEY_COUNTRY = (
         ('k', "kor"),
@@ -19,6 +20,18 @@ class MakeAccountForm(forms.ModelForm):
     class Meta:
         model = AccountBooksName
         fields = ['account_name', 'money']
+
+
+class MakeDemoUser(forms.ModelForm):
+    demo_user_id = forms.CharField(
+        max_length=100,
+        required=True,
+        help_text="데모 사용자이름을 입력해 주세요."
+    )
+
+    class Meta:
+        model = DemoUser
+        fields = ["demo_user_id"]
 
 
 class WriteHistory(forms.ModelForm):

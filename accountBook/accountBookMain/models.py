@@ -32,6 +32,17 @@ class PartyBelongTo(models.Model):
     create_at = models.DateTimeField(auto_now_add=True)
 
 
+class DemoUser(models.Model):
+    """
+        데모 사용자 테이블
+    """
+    account_book = models.ForeignKey(AccountBooksName, related_name="DemoUser", on_delete=models.CASCADE)
+    demo_user_id = models.CharField(max_length=100)
+
+    class Meta:
+        unique_together = (('account_book', 'demo_user_id'),)
+
+
 class Invitation(models.Model):
     """
         소속 가계부로 초대

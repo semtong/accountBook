@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'home' %}"> Main </a></li>
+    <li class="breadcrumb-item"><a href="{% url 'history_main' info.account_id %}">{{ info.account_name }}</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'accountListUser' info.account_id %}">{{ info.account_name }} User List</a></li>
+    <li class="breadcrumb-item active">데모 사용자추가</li>
+{% endblock %}
+
+
+{% block contents %}
+    {% if err == 1 %}
+        <p class="text-left" style="color:red">중복된 데모사용자가 있습니다.</p>
+    {% endif %}
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {% include 'includes/form.html' %}
+        <button type="submit" class="btn btn-success">Create demo user</button>
+    </form>
+{% endblock %}

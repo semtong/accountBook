@@ -54,6 +54,12 @@ urlpatterns = [
     # add account user
     path('addAccountUser/<int:history>/', views.add_account_user, name="addAccountUser"),
 
+    # add demo user
+    path('make_demo_user/<int:history>/', views.make_demo_user, name="makeDemoUser"),
+
+    # delete demo user
+    path('del_demo_user/<str:del_demo_user>/', views.del_demo_user, name="delDemoUser"),
+
     # look user list
     path('accountListUser/<int:history>/', views.account_user_list, name='accountListUser'),
 

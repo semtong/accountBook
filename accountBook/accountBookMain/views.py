@@ -15,6 +15,7 @@ from django.views.generic import ListView
 # for paging
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
+
 @login_required
 def accept_account(request, book_list):
     # return redirect('history_main', history_pk=history_pk)
@@ -83,6 +84,45 @@ def send_account_invite(request, history, user_list):
 
 
 @login_required
+def make_demo_user(request, history):
+    account_obj = AccountBooksName.objects.get(account_id=history)
+
+    if request.method == 'POST':
+        form = MakeDemoUser(request.POST)
+        if form.is_valid():
+            try:
+                demo = form.save(commit=False)
+                demo.account_book = account_obj
+                demo.save()
+                return redirect('accountListUser', history=history)
+            except Exception as e:
+                form = MakeDemoUser()
+                err_val = 1
+    else:
+        form = MakeDemoUser()
+        err_val = 0
+
+    return render(request, 'make_demo_user.html', {'form': form, 'info': account_obj, 'err': err_val})
+
+
+@login_required
+def del_demo_user(request, del_demo_user):
+
+    del_list = del_demo_user.split("_")
+    length = len(del_list)
+
+    temp = int
+    for i in range(0, length-1):
+        if i == 0:
+            temp_e = DemoUser.objects.filter(pk=int(del_list[i]))
+            temp = temp_e[i].account_book.pk
+
+        DemoUser.objects.filter(pk=int(del_list[i])).delete()
+
+    return redirect('accountListUser', history=temp)
+
+
+@login_required
 def add_account_user(request, history):
     account_obj = AccountBooksName.objects.get(account_id=history)
 
@@ -113,10 +153,26 @@ def account_user_list(request, history):
     info_account = get_obj[0].account_id
 
     length = len(get_obj)
+    # button flag
     if length < 2:
         obj = get_obj
-    else:
 
+        get_demo_obj = DemoUser.objects.filter(account_book=history)
+        if len(get_demo_obj) > 0:
+            # for paging
+            page = request.GET.get('page', 1)
+            paginator = Paginator(get_demo_obj, 20)
+            btn_flag = 2
+            try:
+                obj = paginator.page(page)
+            except PageNotAnInteger:
+                obj = paginator.page(1)
+            except EmptyPage:
+                obj = paginator.page(paginator.num_pages)
+        else:
+            btn_flag = 0
+    else:
+        btn_flag = 1
         # for paging
         page = request.GET.get('page', 1)
         paginator = Paginator(get_obj, 20)
@@ -128,7 +184,7 @@ def account_user_list(request, history):
         except EmptyPage:
             obj = paginator.page(paginator.num_pages)
 
-    return render(request, 'party_list.html', {'user_list': obj, 'info': info_account})
+    return render(request, 'party_list.html', {'user_list': obj, 'info': info_account, 'btn_flag': btn_flag})
 
 
 @login_required

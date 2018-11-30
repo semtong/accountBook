@@ -6,16 +6,25 @@
 {% block breadcrumb %}
     <li class="breadcrumb-item"><a href="{% url 'home' %}"> Main </a></li>
     <li class="breadcrumb-item"><a href="{% url 'history_main' info.account_id %}">{{ info.account_name }}</a></li>
-    <li class="breadcrumb-item active"> {{ info.account_name }} User List</li>
+    <li class="breadcrumb-item active">{{ info.account_name }} User List</li>
 {% endblock %}
 
 {% block contents %}
 
-    {% if user_list is False %}
-        <h3>등록된 사용자가 없습니다.</h3>
-        <a class="btn btn-warning" href="{% url 'addAccountUser' info.account_id %}" role="button">사용자 초대하기</a>
-    {% else %}
-        <a class="btn btn-warning" href="{% url 'addAccountUser' info.account_id %}" style="margin-bottom:3px;" role="button">사용자 초대하기</a>
+    {% if btn_flag == 0 %}
+        <div class="alert alert-danger" role="alert" style="">
+            <p class="text-left" style="margin:0">등록된 사용자가 없습니다.</p>
+            <p class="text-left" style="margin:0">사용자초대 또는 데모 사용자를 추가해 주세요.</p>
+        </div>
+        <a class="btn btn-warning" href="{% url 'addAccountUser' info.account_id %}" style="margin-bottom:3px;" role="button">Invitation user</a>
+        <a class="btn btn-secondary" href="{% url 'makeDemoUser' info.account_id %}" style="margin-bottom:3px;" role="button">Add demo user</a>
+    {% elif btn_flag == 1 %}
+        <a class="btn btn-warning" href="{% url 'addAccountUser' info.account_id %}" style="margin-bottom:3px;" role="button">Invitation user</a>
+    {% elif btn_flag == 2 %}
+        <a class="btn btn-secondary" href="{% url 'makeDemoUser' info.account_id %}" style="margin-bottom:3px;" role="button">Add demo user</a>
+    {% endif %}
+
+    {% if btn_flag == 1 %}
         <table class="table table-striped">
             <thead class="thead-dark">
                 <tr>
@@ -42,8 +51,49 @@
 
                     {% endif %}
                 {% endfor %}
+
             </tbody>
         </table>
+    {% elif btn_flag == 2 %}
+        <table class="table table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">User Id</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Delete</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        {{ user.username }}<span class="badge badge-light">Me</span>
+                    </td>
+                    <td>
+                        User
+                    </td>
+                    <td></td>
+                </tr>
+                {% for i in user_list %}
+                    <tr>
+                        <td>
+                            {{ i.demo_user_id }}
+                        </td>
+                        <td>
+                            Demo user
+                        </td>
+                        <td>
+                            <input type="checkbox" class="checkBox" aria-label="Checkbox for following text input " value="{{ i.pk }}" name="invitation[]">
+                        </td>
+                    </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+        <div id="add_alert" class="alert alert-danger" role="alert" style="display:none">
+            삭제할 데모 사용자를 선택해 주세요.
+        </div>
+        <a class="btn btn-danger" role="button" style="float: right; color:white" onclick="active({{info.account_id}})">Demo user delete</a>
     {% endif %}
 
     <!-- for paging fbv -->
@@ -90,4 +140,28 @@
     {% endif %}
 
 
+    <script language="JavaScript">
+        function active(pk){
+            temp = '';
+
+            ul = ''
+            var size = document.getElementsByName("invitation[]").length;
+            for(var i = 0; i < size; i++){
+                if(document.getElementsByName("invitation[]")[i].checked == true){
+                    val = document.getElementsByName("invitation[]")[i].value;
+                    temp = ''
+                    temp += val+'_';
+                    ul += temp
+                }
+            }
+            if (temp.length == 0){
+                x = document.getElementById("add_alert");
+                x.style.display = "block";
+                return;
+            }
+            var str = "{% url 'delDemoUser' 'temp1' %}".replace(/temp1/,ul);
+
+            document.location.href = str;
+        }
+    </script>
 {% endblock %}
